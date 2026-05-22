@@ -81,5 +81,14 @@ def get_discord_id_by_uuid(mc_uuid: str) -> int | None:
     return None
 
 
+def delete_link(discord_id: int) -> bool:
+    linked = _read(LINKED_FILE)
+    if str(discord_id) not in linked:
+        return False
+    del linked[str(discord_id)]
+    _write(LINKED_FILE, linked)
+    return True
+
+
 def is_linked(discord_id: int) -> bool:
     return get_link_by_discord(discord_id) is not None

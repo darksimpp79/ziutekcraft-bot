@@ -138,6 +138,49 @@ class LinkCog(commands.Cog):
         embed.set_footer(text=footer("DC-MC Link"))
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    # ── /rozlacz-konto ────────────────────────────────────────────────────────
+
+    @app_commands.command(
+        name="rozlacz-konto",
+        description="Rozłącz swoje konto Discord od Minecraft (lub cudze — tylko admin)",
+    )
+    @app_commands.guilds(discord.Object(id=GUILD_ID))
+    @app_commands.describe(uzytkownik="[ADMIN] Rozłącz konto innego gracza")
+    async def rozlacz_konto(self, interaction: discord.Interaction,
+                            uzytkownik: discord.Member | None = None):
+        is_admin = interaction.user.guild_permissions.administrator
+
+        if uzytkownik and not is_admin:
+            await interaction.response.send_message(
+                "❌ Tylko administrator może rozłączać cudze konta.", ephemeral=True
+            )
+            return
+
+        target = uzytkownik or interaction.user
+        data = link_store.get_link_by_discord(target.id)
+
+        if not data:
+            await interaction.response.send_message(
+                f"ℹ️ {'Ten użytkownik nie ma' if uzytkownik else 'Nie masz'} połączonego konta MC.",
+                ephemeral=True,
+            )
+            return
+
+        link_store.delete_link(target.id)
+
+        linked_role = discord.utils.get(interaction.guild.roles, name="🔗 Połączony")
+        if linked_role and linked_role in target.roles:
+            try:
+                await target.remove_roles(linked_role, reason="Rozłączono konto DC-MC")
+            except discord.Forbidden:
+                pass
+
+        await interaction.response.send_message(
+            f"✅ Konto MC `{data['mc_nick']}` zostało rozłączone od "
+            f"{'użytkownika ' + target.mention if uzytkownik else 'Twojego konta Discord'}.",
+            ephemeral=True,
+        )
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(LinkCog(bot))
