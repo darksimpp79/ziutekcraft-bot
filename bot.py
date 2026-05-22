@@ -43,6 +43,7 @@ async def main():
         await bot.load_extension("cogs.invites")
         await bot.load_extension("cogs.daily_dc")
         await bot.load_extension("cogs.creator")
+        await bot.load_extension("cogs.ranks")
         await bot.start(TOKEN)
 
 

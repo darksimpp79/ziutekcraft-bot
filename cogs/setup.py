@@ -22,6 +22,19 @@ ROLES = [
     {"name": "📨 Rekruter",      "color": 0xFFAA00, "hoist": False},
     {"name": "🏅 Ambasador",     "color": 0xFFCC00, "hoist": False},
     {"name": "💎 Legenda Ziutka", "color": 0x00CCFF, "hoist": True},
+    # LP ranks
+    {"name": "🔧 Helper",    "color": 0x0099FF, "hoist": True},
+    {"name": "🌟 Premium+",  "color": 0xFF5500, "hoist": True},
+    {"name": "⭐ Premium",   "color": 0xFFAA00, "hoist": False},
+    # Kill ranks
+    {"name": "⚜ Generał",   "color": 0xFF2222, "hoist": True},
+    {"name": "🦅 Pułkownik", "color": 0xFF6600, "hoist": False},
+    {"name": "🎖 Major",     "color": 0xFFAA00, "hoist": False},
+    {"name": "🗡 Kapitan",   "color": 0xFFDD00, "hoist": False},
+    {"name": "🔱 Porucznik", "color": 0x00CCFF, "hoist": False},
+    {"name": "⚡ Sierżant",  "color": 0x00AA88, "hoist": False},
+    {"name": "🔰 Kapral",    "color": 0x226600, "hoist": False},
+    {"name": "🪖 Rekrut",    "color": 0x555555, "hoist": False},
 ]
 
 STRUCTURE = [

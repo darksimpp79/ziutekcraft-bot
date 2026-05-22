@@ -90,5 +90,9 @@ def delete_link(discord_id: int) -> bool:
     return True
 
 
+def get_all_links() -> dict:
+    return _read(LINKED_FILE)
+
+
 def is_linked(discord_id: int) -> bool:
     return get_link_by_discord(discord_id) is not None
