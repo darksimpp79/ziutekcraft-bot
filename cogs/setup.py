@@ -100,14 +100,17 @@ STRUCTURE = [
             {
                 "name": "🔗-polacz-konto-mc",
                 "topic": "Połącz konto Discord z Minecraft i zgarnij 50 znaczków. Użyj /polacz-konto",
+                "no_history": True,
             },
             {
                 "name": "🎁-daily",
                 "topic": "Odbieraj codzienną nagrodę tokenów. Użyj /daily (wymaga połączonego konta MC).",
+                "no_history": True,
             },
             {
                 "name": "📨-zaproszenia",
                 "topic": "Sprawdź swój wynik zaproszeń i milestony. Użyj /zaproszenia",
+                "no_history": True,
             },
             {"name": "🗣-ogolny",  "topic": "Ogólna rozmowa o serwerze i nie tylko."},
             {"name": "❓-pomoc",   "topic": "Pytania techniczne, pomoc z pluginem."},
@@ -219,6 +222,7 @@ async def build_server(guild: discord.Guild) -> list[str]:
             beta_only    = ch_def.get("beta_only", False)
             read_only    = ch_def.get("read_only", False)
             everyone_vis = ch_def.get("everyone_read", False)
+            no_history   = ch_def.get("no_history", False)
 
             if discord.utils.get(guild.text_channels, name=ch_name):
                 log.append(f"    ↩ #{ch_name}")
@@ -244,7 +248,10 @@ async def build_server(guild: discord.Guild) -> list[str]:
                 if mod:       ow[mod]       = _ow(True, True)
             else:
                 ow[everyone] = _ow(False, False)
-                if verified:  ow[verified]  = _ow(True, not read_only)
+                if verified:
+                    ow[verified] = _ow(True, not read_only)
+                    if no_history:
+                        ow[verified].read_message_history = False
                 if admin:     ow[admin]     = _ow(True, True)
                 if mod:       ow[mod]       = _ow(True, True)
 
