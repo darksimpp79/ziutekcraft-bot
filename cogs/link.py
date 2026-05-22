@@ -142,21 +142,14 @@ class LinkCog(commands.Cog):
 
     @app_commands.command(
         name="rozlacz-konto",
-        description="Rozłącz swoje konto Discord od Minecraft (lub cudze — tylko admin)",
+        description="[ADMIN] Rozłącz konto Discord od Minecraft",
     )
     @app_commands.guilds(discord.Object(id=GUILD_ID))
-    @app_commands.describe(uzytkownik="[ADMIN] Rozłącz konto innego gracza")
+    @app_commands.default_permissions(administrator=True)
+    @app_commands.describe(uzytkownik="Użytkownik którego konto rozłączyć")
     async def rozlacz_konto(self, interaction: discord.Interaction,
-                            uzytkownik: discord.Member | None = None):
-        is_admin = interaction.user.guild_permissions.administrator
-
-        if uzytkownik and not is_admin:
-            await interaction.response.send_message(
-                "❌ Tylko administrator może rozłączać cudze konta.", ephemeral=True
-            )
-            return
-
-        target = uzytkownik or interaction.user
+                            uzytkownik: discord.Member):
+        target = uzytkownik
         data = link_store.get_link_by_discord(target.id)
 
         if not data:
