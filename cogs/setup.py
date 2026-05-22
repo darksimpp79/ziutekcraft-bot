@@ -128,7 +128,7 @@ STRUCTURE = [
 
 
 def _ow(read=True, send=True) -> discord.PermissionOverwrite:
-    return discord.PermissionOverwrite(read_messages=read, send_messages=send, view_channel=read)
+    return discord.PermissionOverwrite(read_messages=read, send_messages=send, view_channel=read, read_message_history=read)
 
 
 async def build_server(guild: discord.Guild) -> list[str]:
