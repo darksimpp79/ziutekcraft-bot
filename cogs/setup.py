@@ -285,6 +285,52 @@ class SetupCog(commands.Cog):
         for chunk in [text[i:i+1900] for i in range(0, len(text), 1900)]:
             await interaction.followup.send(f"```\n{chunk}\n```", ephemeral=True)
 
+    @app_commands.command(
+        name="sync-permissions",
+        description="[ADMIN] Napraw read_message_history na wszystkich istniejących kanałach",
+    )
+    @app_commands.guilds(discord.Object(id=GUILD_ID))
+    @app_commands.default_permissions(administrator=True)
+    async def sync_permissions(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+        guild = interaction.guild
+        fixed = 0
+        errors = 0
+
+        for channel in guild.text_channels:
+            new_overwrites = {}
+            changed = False
+
+            for target, overwrite in channel.overwrites.items():
+                # Sprawdź czy read_messages jest explicite ustawione
+                can_read = overwrite.read_messages
+                can_view = overwrite.view_channel
+
+                # Ustal czy ta rola/osoba może czytać kanał
+                if can_read is True or can_view is True:
+                    if overwrite.read_message_history is not True:
+                        overwrite.read_message_history = True
+                        changed = True
+                elif can_read is False or can_view is False:
+                    if overwrite.read_message_history is not False:
+                        overwrite.read_message_history = False
+                        changed = True
+
+                new_overwrites[target] = overwrite
+
+            if changed:
+                try:
+                    await channel.edit(overwrites=new_overwrites, reason="sync-permissions: fix read_message_history")
+                    fixed += 1
+                except Exception:
+                    errors += 1
+
+        await interaction.followup.send(
+            f"✅ Naprawiono **{fixed}** kanałów. "
+            + (f"❌ Błędy: {errors}" if errors else ""),
+            ephemeral=True,
+        )
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(SetupCog(bot))
