@@ -251,7 +251,7 @@ class InviteCog(commands.Cog):
         if not guild:
             return
         try:
-            invites = await guild.fetch_invites()
+            invites = await guild.invites()
             self._cache = {
                 inv.code: {
                     "uses":       inv.uses or 0,
