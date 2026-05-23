@@ -19,10 +19,10 @@ class WelcomeCog(commands.Cog):
             description=(
                 f"Cieszę się, że tu jesteś!\n\n"
                 f"**Żeby uzyskać dostęp do serwera:**\n"
-                f"Wejdź na kanał **#📖-zasady**, przeczytaj regulamin\n"
-                f'i kliknij przycisk „Akceptuję”.\n\n'
-                f"**Chcesz grać w becie?**\n"
-                f"Po weryfikacji idź do **#🔑-dolacz-do-bety**.\n"
+                f”Wejdź na kanał **#✅・weryfikacja**, kliknij przycisk\n”
+                f'i rozwiąż działanie — dostaniesz dostęp do serwera.\n\n'
+                f”**Chcesz grać w becie?**\n”
+                f”Po weryfikacji idź do **#🔑・dolacz-do-bety**.\n”
                 f"Wpisujesz nick MC → automatyczny whitelist!\n\n"
                 f"━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"*{TAGLINE_2}*"
@@ -40,13 +40,13 @@ class WelcomeCog(commands.Cog):
         except discord.Forbidden:
             pass  # DM zablokowane
 
-        # ── Powiadomienie w #📖-zasady (kasuje się po 20s) ───────────────────
-        rules_chan = discord.utils.get(member.guild.text_channels, name="📖-zasady")
-        if rules_chan:
+        # ── Powiadomienie w #👋・powitalnia (kasuje się po 30s) ─────────────
+        welcome_chan = discord.utils.get(member.guild.text_channels, name="👋・powitalnia")
+        if welcome_chan:
             try:
-                await rules_chan.send(
-                    f"👋 {member.mention} dołączył! Przeczytaj regulamin powyżej i kliknij przycisk.",
-                    delete_after=20,
+                await welcome_chan.send(
+                    f"👋 {member.mention} dołączył do serwera! Witamy!",
+                    delete_after=30,
                 )
             except discord.Forbidden:
                 pass
@@ -56,7 +56,7 @@ class WelcomeCog(commands.Cog):
         if member.guild.id != GUILD_ID:
             return
 
-        staff_chan = discord.utils.get(member.guild.text_channels, name="📊-staff-czat")
+        staff_chan = discord.utils.get(member.guild.text_channels, name="📊・staff-czat")
         if staff_chan:
             embed = discord.Embed(
                 description=f"👋 **{member}** (`{member.id}`) opuścił serwer.",

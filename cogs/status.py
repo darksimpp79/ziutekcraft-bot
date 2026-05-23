@@ -56,10 +56,13 @@ class StatusCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self._status_msg: discord.Message | None = None
+        self._dc_count_msg: discord.Message | None = None
         self.auto_update.start()
+        self.dc_member_count.start()
 
     def cog_unload(self):
         self.auto_update.cancel()
+        self.dc_member_count.cancel()
 
     @app_commands.command(name="status", description="Sprawdź status serwera Minecraft")
     @app_commands.guilds(discord.Object(id=GUILD_ID))
@@ -72,7 +75,7 @@ class StatusCog(commands.Cog):
         chan = (
             self.bot.get_channel(STATUS_CHAN_ID)
             if STATUS_CHAN_ID
-            else discord.utils.get(self.bot.get_all_channels(), name="🟢-status-serwera")
+            else discord.utils.get(self.bot.get_all_channels(), name="🟢・status-serwera")
         )
         if not isinstance(chan, discord.TextChannel):
             return
@@ -96,6 +99,44 @@ class StatusCog(commands.Cog):
 
     @auto_update.before_loop
     async def before_update(self):
+        await self.bot.wait_until_ready()
+
+    # ── DC member count channel ───────────────────────────────────────────────
+
+    @tasks.loop(minutes=10)
+    async def dc_member_count(self):
+        guild = self.bot.get_guild(GUILD_ID)
+        if not guild:
+            return
+
+        chan = discord.utils.get(guild.text_channels, name="👥・graczy-dc")
+        if not isinstance(chan, discord.TextChannel):
+            return
+
+        count = guild.member_count
+        embed = discord.Embed(
+            description=f"### 👥  Graczy na DC: **{count}**",
+            color=GREEN,
+        )
+        embed.set_footer(text=footer("Aktualizacja co 10 min"))
+
+        if self._dc_count_msg is None:
+            async for msg in chan.history(limit=5):
+                if msg.author == self.bot.user and msg.embeds:
+                    self._dc_count_msg = msg
+                    break
+
+        if self._dc_count_msg:
+            try:
+                await self._dc_count_msg.edit(embed=embed)
+                return
+            except discord.NotFound:
+                self._dc_count_msg = None
+
+        self._dc_count_msg = await chan.send(embed=embed)
+
+    @dc_member_count.before_loop
+    async def before_dc_count(self):
         await self.bot.wait_until_ready()
 
 

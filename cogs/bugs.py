@@ -117,7 +117,7 @@ class BugFixView(discord.ui.View):
         tytul = self.tytul or thread.name
 
         # Wyślij do #✅-naprawione
-        fixed_ch = discord.utils.get(guild.text_channels, name="✅-naprawione")
+        fixed_ch = discord.utils.get(guild.text_channels, name="✅・naprawione")
         if fixed_ch:
             embed = discord.Embed(
                 title="✅  Bug Naprawiony",

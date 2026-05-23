@@ -286,10 +286,10 @@ class InfoCog(commands.Cog):
         results = []
 
         mapping = {
-            "📖-jak-zaczac": [embed_jak_zaczac(), embed_klasy()],
-            "💰-cennik":     [embed_cennik()],
-            "📜-regulamin":  [embed_regulamin()],
-            "🏰-klany":      [embed_klany()],
+            "📖・jak-zaczac": [embed_jak_zaczac(), embed_klasy()],
+            "💰・cennik":     [embed_cennik()],
+            "📜・regulamin":  [embed_regulamin()],
+            "🏰・klany":      [embed_klany()],
         }
 
         for ch_name, embeds in mapping.items():

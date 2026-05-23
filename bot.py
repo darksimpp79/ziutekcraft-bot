@@ -59,6 +59,7 @@ async def main():
         await bot.load_extension("cogs.ticket")
         await bot.load_extension("cogs.bugs")
         await bot.load_extension("cogs.suggestions")
+        await bot.load_extension("cogs.voice")
         await bot.start(TOKEN)
 
 

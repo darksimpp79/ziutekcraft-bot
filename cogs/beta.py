@@ -125,7 +125,7 @@ class NickModal(discord.ui.Modal, title="Dołącz do Bety — podaj nick"):
         log_chan = (
             self.bot.get_channel(BETA_LOG_CHAN_ID)
             if BETA_LOG_CHAN_ID
-            else discord.utils.get(guild.text_channels, name="📥-beta-log")
+            else discord.utils.get(guild.text_channels, name="📥・beta-log")
         )
         if log_chan:
             status = "✅ RCON OK" if ok else f"❌ RCON FAIL: {msg}"
