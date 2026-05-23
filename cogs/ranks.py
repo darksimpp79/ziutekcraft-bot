@@ -182,9 +182,7 @@ class RanksCog(commands.Cog):
             member = guild.get_member(int(discord_id_str))
             if not member:
                 continue
-            lp_group = await asyncio.get_event_loop().run_in_executor(
-                None, _get_lp_group, nick
-            )
+            lp_group = _get_lp_group(nick)
             await assign_lp_rank(member, lp_group)
 
     @lp_sync_task.before_loop
@@ -211,7 +209,7 @@ class RanksCog(commands.Cog):
             return
 
         nick = data["mc_nick"]
-        lp_group = await asyncio.get_event_loop().run_in_executor(None, _get_lp_group, nick)
+        lp_group = _get_lp_group(nick)
         await assign_lp_rank(uzytkownik, lp_group)
 
         dc_role = LP_ROLE_MAP.get((lp_group or "").lower(), "—")
