@@ -75,7 +75,8 @@ class LinkCog(commands.Cog):
 
     async def cog_load(self):
         app = web.Application()
-        app.router.add_get("/api/link", self._handle_link)
+        app.router.add_get("/api/link",   self._handle_link)
+        app.router.add_get("/api/linked", self._handle_linked)
         self._runner = web.AppRunner(app)
         await self._runner.setup()
         site = web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT)
@@ -85,6 +86,29 @@ class LinkCog(commands.Cog):
     async def cog_unload(self):
         if self._runner:
             await self._runner.cleanup()
+
+    # ── GET /api/linked?uuid=XXX — sprawdź czy UUID jest połączony ───────────
+
+    async def _handle_linked(self, request: web.Request) -> web.Response:
+        uuid = request.rel_url.query.get("uuid", "")
+        if not uuid:
+            return web.json_response({"ok": False, "error": "missing uuid"}, status=400)
+
+        discord_id = link_store.get_discord_id_by_uuid(uuid)
+        if discord_id is None:
+            return web.json_response({"linked": False}, status=404)
+
+        data = link_store.get_link_by_discord(discord_id)
+        guild  = self.bot.get_guild(GUILD_ID)
+        member = guild.get_member(discord_id) if guild else None
+        discord_tag = str(member) if member else str(discord_id)
+
+        return web.json_response({
+            "linked":      True,
+            "discord_id":  discord_id,
+            "discord_tag": discord_tag,
+            "mc_nick":     data.get("mc_nick", ""),
+        })
 
     # ── Webhook called by MC plugin ───────────────────────────────────────────
 
@@ -162,7 +186,7 @@ class LinkCog(commands.Cog):
         # Natychmiastowy sync LP rangi po połączeniu (bez czekania na 5-min pętlę)
         try:
             from cogs.ranks import assign_lp_rank, _get_lp_group
-            lp_group = await asyncio.get_event_loop().run_in_executor(None, _get_lp_group, mc_nick)
+            lp_group = _get_lp_group(mc_nick)
             await assign_lp_rank(member, lp_group)
         except Exception as e:
             print(f"[Link] LP rank sync error for {mc_nick}: {e}")
