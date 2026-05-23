@@ -78,8 +78,9 @@ class LinkCog(commands.Cog):
 
     async def cog_load(self):
         app = web.Application()
-        app.router.add_get("/api/link",   self._handle_link)
-        app.router.add_get("/api/linked", self._handle_linked)
+        app.router.add_get("/api/link",             self._handle_link)
+        app.router.add_get("/api/linked",           self._handle_linked)
+        app.router.add_get("/api/claim-dc-reward",  self._handle_claim_reward)
         self._runner = web.AppRunner(app)
         await self._runner.setup()
         await web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT).start()
@@ -110,11 +111,25 @@ class LinkCog(commands.Cog):
         discord_tag = str(member) if member else str(discord_id)
 
         return web.json_response({
-            "linked":      True,
-            "discord_id":  discord_id,
-            "discord_tag": discord_tag,
-            "mc_nick":     data.get("mc_nick", ""),
+            "linked":        True,
+            "discord_id":    discord_id,
+            "discord_tag":   discord_tag,
+            "mc_nick":       data.get("mc_nick", ""),
+            "reward_given":  data.get("reward_given", False),
         })
+
+    # ── GET /api/claim-dc-reward?uuid=XXX — atomowo oznacz nagrodę jako odebrana ──
+
+    async def _handle_claim_reward(self, request: web.Request) -> web.Response:
+        uuid = request.rel_url.query.get("uuid", "")
+        if not uuid:
+            return web.json_response({"ok": False, "error": "missing uuid"}, status=400)
+        result = link_store.try_claim_reward(uuid)
+        if result == "ok":
+            return web.json_response({"ok": True})
+        if result == "already_claimed":
+            return web.json_response({"ok": False, "error": "already claimed"}, status=409)
+        return web.json_response({"ok": False, "error": "not linked"}, status=404)
 
     # ── Webhook called by MC plugin ───────────────────────────────────────────
 

@@ -66,7 +66,7 @@ def consume_code(code: str) -> int | None:
 
 def save_link(discord_id: int, mc_nick: str, mc_uuid: str):
     linked = _read(LINKED_FILE)
-    linked[str(discord_id)] = {"mc_nick": mc_nick, "mc_uuid": mc_uuid}
+    linked[str(discord_id)] = {"mc_nick": mc_nick, "mc_uuid": mc_uuid, "reward_given": False}
     _write(LINKED_FILE, linked)
 
 
@@ -96,3 +96,17 @@ def get_all_links() -> dict:
 
 def is_linked(discord_id: int) -> bool:
     return get_link_by_discord(discord_id) is not None
+
+
+def try_claim_reward(mc_uuid: str) -> str:
+    """Atomically check + mark reward as given.
+    Returns: 'ok' (first claim), 'already_claimed', or 'not_linked'."""
+    linked = _read(LINKED_FILE)
+    for did, data in linked.items():
+        if data.get("mc_uuid") == mc_uuid:
+            if data.get("reward_given", False):
+                return "already_claimed"
+            data["reward_given"] = True
+            _write(LINKED_FILE, linked)
+            return "ok"
+    return "not_linked"
