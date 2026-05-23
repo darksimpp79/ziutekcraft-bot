@@ -38,82 +38,96 @@ ROLES = [
 ]
 
 STRUCTURE = [
-    # ── Punkt wejścia — widoczny dla wszystkich ────────────────────────────────
+    # ── Weryfikacja — widoczna dla wszystkich ─────────────────────────────────
     {
-        "category": "🚪 WITAJ",
+        "category": "✅ WERYFIKACJA",
         "channels": [
             {
-                "name": "📖-zasady",
-                "topic": "Przeczytaj regulamin i kliknij przycisk aby uzyskać dostęp do serwera.",
+                "name": "✅-weryfikacja",
+                "topic": "Kliknij przycisk i rozwiąż działanie aby uzyskać dostęp do serwera.",
                 "everyone_read": True,
             },
-            {
-                "name": "📣-ogloszenia",
-                "topic": "Oficjalne ogłoszenia serwera.",
-                "read_only": True,
-            },
-            {
-                "name": "🔔-changelog",
-                "topic": "Historia zmian pluginu — nowe wersje, poprawki, balans.",
-                "read_only": True,
-            },
         ],
     },
-    # ── Tryb Assassin ─────────────────────────────────────────────────────────
+    # ── Statystyki — read-only, bot auto-aktualizuje ──────────────────────────
     {
-        "category": "⚔ ASSASSIN — ARENA PVP",
+        "category": "📊 STATYSTYKI",
         "channels": [
-            {
-                "name": "🟢-status-serwera",
-                "topic": "Status serwera Minecraft — auto-aktualizacja co 5 min.",
-                "read_only": True,
-            },
-            {
-                "name": "🏆-hall-of-fame",
-                "topic": "Top graczy — kille, prestiż, odznaki.",
-                "read_only": True,
-            },
-            {
-                "name": "📸-klipy",
-                "topic": "Screenshoty i klipy z rozgrywki.",
-            },
+            {"name": "🟢-status-serwera",  "topic": "Status serwera MC — auto-aktualizacja co 5 min.", "read_only": True},
+            {"name": "💀-top-killer",       "topic": "Aktualny lider rankingu killów — auto.", "read_only": True},
+            {"name": "🏅-sezon",            "topic": "Numer aktywnego sezonu i jego koniec.", "read_only": True},
         ],
     },
-    # ── Beta ──────────────────────────────────────────────────────────────────
+    # ── Start ─────────────────────────────────────────────────────────────────
     {
-        "category": "🎟 BETA & DOSTĘP",
+        "category": "🚀 START",
         "channels": [
-            {
-                "name": "🔑-dolacz-do-bety",
-                "topic": "Kliknij przycisk i wpisz nick MC aby dołączyć do bety i trafić na whitelist.",
-            },
-            {"name": "💬-beta-czat",   "topic": "Czat dla beta testerów.",                              "beta_only": True},
-            {"name": "🐛-bugi",        "topic": "Format: [BŁĄD] Opis + jak odtworzyć.",                 "beta_only": True},
-            {"name": "💡-sugestie",    "topic": "Pomysły i propozycje zmian w rozgrywce.",              "beta_only": True},
-            {"name": "✅-naprawione",  "topic": "Rozwiązane bugi i wdrożone sugestie.",                  "beta_only": True, "read_only": True},
+            {"name": "👋-powitalnia",    "topic": "Powitanie nowych graczy — embed z botami.", "read_only": True},
+            {"name": "📖-jak-zaczac",    "topic": "Przewodnik dla nowych: klasy, rundy, tokeny.", "read_only": True},
+            {"name": "🔑-dolacz-do-bety","topic": "Kliknij przycisk, wpisz nick MC — trafisz na whitelist!"},
         ],
     },
-    # ── Nagrody & społeczność ─────────────────────────────────────────────────
+    # ── Informacje ────────────────────────────────────────────────────────────
     {
-        "category": "💰 NAGRODY & SPOŁECZNOŚĆ",
+        "category": "📋 INFORMACJE",
+        "channels": [
+            {"name": "📢-ogloszenia",  "topic": "Oficjalne ogłoszenia serwera.", "read_only": True},
+            {"name": "🔔-changelog",   "topic": "Historia zmian pluginu — nowe wersje, poprawki, balans.", "read_only": True},
+            {"name": "📜-regulamin",   "topic": "Zasady serwera — przeczytaj przed grą.", "read_only": True},
+            {"name": "💰-cennik",      "topic": "Koszty ulepszeń, klanów, prestiżu — tokeny i znaczki.", "read_only": True},
+            {"name": "💜-boosty",      "topic": "Aktywne boosty Discord i ich bonusy.", "read_only": True},
+            {"name": "🌟-konkursy",    "topic": "Aktywne konkursy i eventy.", "read_only": True},
+        ],
+    },
+    # ── Społeczność ───────────────────────────────────────────────────────────
+    {
+        "category": "🔥 SPOŁECZNOŚĆ",
+        "channels": [
+            {"name": "💬-ogolny",     "topic": "Ogólna rozmowa o serwerze i nie tylko."},
+            {"name": "🖼-screeny",    "topic": "Screenshoty i klipy z rozgrywki."},
+            {"name": "⭐-propozycje", "topic": "Pomysły na nowe funkcje i zmiany w grze."},
+        ],
+    },
+    # ── Gra ───────────────────────────────────────────────────────────────────
+    {
+        "category": "🎮 GRA",
+        "channels": [
+            {"name": "💀-kill-feed",   "topic": "Automatyczne posty: killstreaki 10+, first blood, rekordy.", "read_only": True},
+            {"name": "🏆-rankingi",    "topic": "Top 10 graczy i klanów — aktualizowane przez bota co godzinę.", "read_only": True},
+            {"name": "📝-patch-notes", "topic": "Szczegółowe notki do każdej aktualizacji pluginu.", "read_only": True},
+        ],
+    },
+    # ── Bot ───────────────────────────────────────────────────────────────────
+    {
+        "category": "🤖 BOT",
         "channels": [
             {
-                "name": "🔗-polacz-konto-mc",
-                "topic": "Połącz konto Discord z Minecraft i zgarnij 50 znaczków. Użyj /polacz-konto",
+                "name": "🤖-komendy",
+                "topic": "Wszystkie komendy bota: /daily /stats /zaproszenia /top /polacz — odpowiedzi widoczne tylko dla Ciebie.",
                 "no_history": True,
             },
             {
-                "name": "🎁-daily",
-                "topic": "Odbieraj codzienną nagrodę tokenów. Użyj /daily (wymaga połączonego konta MC).",
+                "name": "🔗-polacz-konto",
+                "topic": "Tutorial połączenia konta DC-MC. Użyj /polacz-konto tutaj.",
                 "no_history": True,
             },
-            {
-                "name": "📨-zaproszenia",
-                "topic": "Sprawdź swój wynik zaproszeń i milestony. Użyj /zaproszenia",
-                "no_history": True,
-            },
-            {"name": "🗣-ogolny",  "topic": "Ogólna rozmowa o serwerze i nie tylko."},
-            {"name": "❓-pomoc",   "topic": "Pytania techniczne, pomoc z pluginem."},
+        ],
+    },
+    # ── Beta (tylko Beta Testerzy) ────────────────────────────────────────────
+    {
+        "category": "🎟 BETA",
+        "channels": [
+            {"name": "💬-beta-czat",  "topic": "Czat dla beta testerów.", "beta_only": True},
+            {"name": "🐛-bugi",       "topic": "Format: [BŁĄD] Opis + kroki do odtworzenia.", "beta_only": True},
+            {"name": "💡-sugestie",   "topic": "Pomysły i propozycje zmian w rozgrywce.", "beta_only": True},
+            {"name": "✅-naprawione", "topic": "Zamknięte bugi i wdrożone sugestie.", "beta_only": True, "read_only": True},
+        ],
+    },
+    # ── Pomoc ─────────────────────────────────────────────────────────────────
+    {
+        "category": "🎫 POMOC",
+        "channels": [
+            {"name": "🎫-ticket", "topic": "Otwórz ticket jeśli masz problem lub pytanie do staffu."},
         ],
     },
     # ── Staff ─────────────────────────────────────────────────────────────────
@@ -131,14 +145,65 @@ STRUCTURE = [
 
 
 def _ow(read=True, send=True) -> discord.PermissionOverwrite:
-    return discord.PermissionOverwrite(read_messages=read, send_messages=send, view_channel=read, read_message_history=read)
+    return discord.PermissionOverwrite(
+        read_messages=read, send_messages=send,
+        view_channel=read, read_message_history=read,
+    )
+
+
+def _build_overwrites(ch_def: dict, staff_only: bool, roles: dict) -> dict:
+    """Build permission overwrites dict for a channel definition."""
+    everyone  = roles["everyone"]
+    admin     = roles.get("admin")
+    mod       = roles.get("mod")
+    beta      = roles.get("beta")
+    verified  = roles.get("verified")
+
+    read_only    = ch_def.get("read_only", False)
+    everyone_vis = ch_def.get("everyone_read", False)
+    beta_only    = ch_def.get("beta_only", False)
+    no_history   = ch_def.get("no_history", False)
+
+    ow: dict = {}
+    if everyone_vis:
+        ow[everyone] = _ow(read=True, send=False)
+        if verified: ow[verified] = _ow(True, False)
+        if admin:    ow[admin]    = _ow(True, True)
+        if mod:      ow[mod]      = _ow(True, True)
+    elif staff_only:
+        ow[everyone] = _ow(False, False)
+        if admin:    ow[admin]    = _ow(True, True)
+        if mod:      ow[mod]      = _ow(True, True)
+    elif beta_only:
+        ow[everyone] = _ow(False, False)
+        if verified: ow[verified] = _ow(False, False)
+        if beta:     ow[beta]     = _ow(True, not read_only)
+        if admin:    ow[admin]    = _ow(True, True)
+        if mod:      ow[mod]      = _ow(True, True)
+    else:
+        ow[everyone] = _ow(False, False)
+        if verified:
+            ow[verified] = _ow(True, not read_only)
+            if no_history:
+                ow[verified].read_message_history = False
+        if admin:    ow[admin]    = _ow(True, True)
+        if mod:      ow[mod]      = _ow(True, True)
+    return ow
+
+
+def _expected_channel_names() -> set[str]:
+    names: set[str] = set()
+    for cat_def in STRUCTURE:
+        for ch_def in cat_def["channels"]:
+            names.add(ch_def["name"])
+    return names
 
 
 async def build_server(guild: discord.Guild) -> list[str]:
     log: list[str] = []
 
     # ── 1. Role ───────────────────────────────────────────────────────────────
-    log.append("**Tworzenie ról...**")
+    log.append("**Tworzenie / weryfikacja ról...**")
     r: dict[str, discord.Role] = {}
     for rd in ROLES:
         existing = discord.utils.get(guild.roles, name=rd["name"])
@@ -158,121 +223,127 @@ async def build_server(guild: discord.Guild) -> list[str]:
         except Exception as e:
             log.append(f"  ❌ {rd['name']}: {e}")
 
-    admin    = r.get("👑 Admin")
-    mod      = r.get("🛡️ Mod")
-    beta     = r.get("⚔ Beta Tester")
-    verified = r.get("✔ Zweryfikowany")
-    linked   = r.get("🔗 Połączony")
-    everyone = guild.default_role
+    roles = {
+        "everyone": guild.default_role,
+        "admin":    r.get("👑 Admin"),
+        "mod":      r.get("🛡️ Mod"),
+        "beta":     r.get("⚔ Beta Tester"),
+        "verified": r.get("✔ Zweryfikowany"),
+        "linked":   r.get("🔗 Połączony"),
+    }
 
     # ── 2. Blokada @everyone ──────────────────────────────────────────────────
     log.append("\n**Blokowanie @everyone...**")
     try:
-        await everyone.edit(permissions=discord.Permissions.none(), reason="AssasinBot /setup")
+        await guild.default_role.edit(permissions=discord.Permissions.none(), reason="AssasinBot /setup")
         log.append("  ✅ @everyone = brak uprawnień")
     except Exception as e:
         log.append(f"  ⚠ @everyone: {e}")
 
     # ── 3. Uprawnienia ról ────────────────────────────────────────────────────
-    for role, label, perms in [
-        (verified, "Zweryfikowany", discord.Permissions(
-            read_messages=True, send_messages=True, read_message_history=True,
-            embed_links=True, attach_files=True, add_reactions=True,
-            use_application_commands=True,
-        )),
-        (linked, "Połączony", discord.Permissions(
-            read_messages=True, send_messages=True, read_message_history=True,
-            embed_links=True, attach_files=True, add_reactions=True,
-            use_application_commands=True,
-        )),
-    ]:
+    base_perms = discord.Permissions(
+        read_messages=True, send_messages=True, read_message_history=True,
+        embed_links=True, attach_files=True, add_reactions=True,
+        use_application_commands=True,
+    )
+    for key, label in [("verified", "Zweryfikowany"), ("linked", "Połączony")]:
+        role = roles.get(key)
         if role:
             try:
-                await role.edit(permissions=perms, reason="AssasinBot /setup")
+                await role.edit(permissions=base_perms, reason="AssasinBot /setup")
                 log.append(f"  ✅ {label} = podstawowe uprawnienia")
             except Exception as e:
                 log.append(f"  ⚠ {label}: {e}")
 
-    # ── 4. Kategorie i kanały ─────────────────────────────────────────────────
-    log.append("\n**Tworzenie kategorii i kanałów...**")
+    # ── 4. Kategorie i kanały (tworzy nowe + aktualizuje istniejące) ──────────
+    log.append("\n**Synchronizacja kategorii i kanałów...**")
     for cat_def in STRUCTURE:
         cat_name   = cat_def["category"]
         staff_only = cat_def.get("staff_only", False)
 
+        cat_ow: dict = {guild.default_role: _ow(False, False)}
+        if roles.get("admin"):  cat_ow[roles["admin"]] = _ow(True, True)
+        if roles.get("mod"):    cat_ow[roles["mod"]]   = _ow(True, True)
+        if not staff_only and roles.get("verified"):
+            cat_ow[roles["verified"]] = _ow(True, True)
+
         existing_cat = discord.utils.get(guild.categories, name=cat_name)
         if existing_cat:
-            cat = existing_cat
-            log.append(f"  ↩ {cat_name} (już istnieje)")
-        else:
-            cat_ow: dict = {everyone: _ow(False, False)}
-            if admin:    cat_ow[admin]    = _ow(True, True)
-            if mod:      cat_ow[mod]      = _ow(True, True)
-            if not staff_only and verified:
-                cat_ow[verified] = _ow(True, True)
             try:
-                cat = await guild.create_category(cat_name, overwrites=cat_ow,
-                                                   reason="AssasinBot /setup")
-                log.append(f"  ✅ {cat_name}")
+                await existing_cat.edit(overwrites=cat_ow, reason="AssasinBot /setup sync")
+                log.append(f"  🔄 {cat_name} (uprawnienia zaktualizowane)")
+            except Exception as e:
+                log.append(f"  ⚠ {cat_name}: {e}")
+            cat = existing_cat
+        else:
+            try:
+                cat = await guild.create_category(cat_name, overwrites=cat_ow, reason="AssasinBot /setup")
+                log.append(f"  ✅ {cat_name} (nowa)")
             except Exception as e:
                 log.append(f"  ❌ {cat_name}: {e}")
                 continue
 
         for ch_def in cat_def["channels"]:
-            ch_name      = ch_def["name"]
-            beta_only    = ch_def.get("beta_only", False)
-            read_only    = ch_def.get("read_only", False)
-            everyone_vis = ch_def.get("everyone_read", False)
-            no_history   = ch_def.get("no_history", False)
-
-            if discord.utils.get(guild.text_channels, name=ch_name):
-                log.append(f"    ↩ #{ch_name}")
-                continue
-
-            ow: dict = {}
-
-            if everyone_vis:
-                # Widoczny dla wszystkich (weryfikacja + ogłoszenia)
-                ow[everyone] = _ow(read=True,  send=False)
-                if verified: ow[verified] = _ow(True, False)
-                if admin:    ow[admin]    = _ow(True, True)
-                if mod:      ow[mod]      = _ow(True, True)
-            elif staff_only:
-                ow[everyone] = _ow(False, False)
-                if admin:    ow[admin]    = _ow(True, True)
-                if mod:      ow[mod]      = _ow(True, True)
-            elif beta_only:
-                ow[everyone]  = _ow(False, False)
-                if verified:  ow[verified]  = _ow(False, False)
-                if beta:      ow[beta]      = _ow(True, not read_only)
-                if admin:     ow[admin]     = _ow(True, True)
-                if mod:       ow[mod]       = _ow(True, True)
+            ch_name = ch_def["name"]
+            ow = _build_overwrites(ch_def, staff_only, roles)
+            existing_ch = discord.utils.get(guild.text_channels, name=ch_name)
+            if existing_ch:
+                try:
+                    await existing_ch.edit(
+                        overwrites=ow,
+                        topic=ch_def.get("topic", ""),
+                        category=cat,
+                        reason="AssasinBot /setup sync",
+                    )
+                    log.append(f"    🔄 #{ch_name} (uprawnienia zaktualizowane)")
+                except Exception as e:
+                    log.append(f"    ⚠ #{ch_name}: {e}")
             else:
-                ow[everyone] = _ow(False, False)
-                if verified:
-                    ow[verified] = _ow(True, not read_only)
-                    if no_history:
-                        ow[verified].read_message_history = False
-                if admin:     ow[admin]     = _ow(True, True)
-                if mod:       ow[mod]       = _ow(True, True)
-
-            try:
-                await guild.create_text_channel(
-                    ch_name, category=cat,
-                    topic=ch_def.get("topic", ""),
-                    overwrites=ow,
-                    reason="AssasinBot /setup",
-                )
-                log.append(f"    ✅ #{ch_name}")
-            except Exception as e:
-                log.append(f"    ❌ #{ch_name}: {e}")
+                try:
+                    await guild.create_text_channel(
+                        ch_name, category=cat,
+                        topic=ch_def.get("topic", ""),
+                        overwrites=ow,
+                        reason="AssasinBot /setup",
+                    )
+                    log.append(f"    ✅ #{ch_name} (nowy)")
+                except Exception as e:
+                    log.append(f"    ❌ #{ch_name}: {e}")
 
     log.append("\n✅ **Setup zakończony!**")
     log.append("\n**Następne kroki:**")
-    log.append("1. `/verify-panel` w #📖-zasady")
-    log.append("2. `/beta-panel` w #🔑-dolacz-do-bety")
-    log.append("3. Uzupełnij ID ról i kanałów w .env (BETA_ROLE_ID, STATUS_CHAN_ID, itd.)")
-    log.append("4. Upewnij się że port LINK_BOT_PORT (domyślnie 8642) jest otwarty na firewallu VPS")
+    log.append("1. `/cleanup` — usuń stare kanały spoza struktury")
+    log.append("2. `/verify-panel` w #✅-weryfikacja")
+    log.append("3. `/beta-panel` w #🔑-dolacz-do-bety")
+    log.append("4. `/info-setup` — wypełnij kanały informacyjne embedami")
+    log.append("5. Uzupełnij .env: BETA_ROLE_ID, STATUS_CHAN_ID, BETA_LOG_CHAN_ID")
     return log
+
+
+# ── Cleanup confirmation view ─────────────────────────────────────────────────
+
+class CleanupConfirmView(discord.ui.View):
+    def __init__(self, channels_to_delete: list[discord.TextChannel]):
+        super().__init__(timeout=60)
+        self.channels_to_delete = channels_to_delete
+
+    @discord.ui.button(label="✅ Tak, usuń", style=discord.ButtonStyle.danger)
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.stop()
+        deleted, errors = [], []
+        for ch in self.channels_to_delete:
+            try:
+                await ch.delete(reason="AssasinBot /cleanup")
+                deleted.append(f"🗑 #{ch.name}")
+            except Exception as e:
+                errors.append(f"❌ #{ch.name}: {e}")
+        result = "\n".join(deleted + errors) or "Brak kanałów do usunięcia."
+        await interaction.response.edit_message(content=f"**Usunięto:**\n{result}", view=None)
+
+    @discord.ui.button(label="❌ Anuluj", style=discord.ButtonStyle.secondary)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.stop()
+        await interaction.response.edit_message(content="Anulowano.", view=None)
 
 
 class SetupCog(commands.Cog):
@@ -281,7 +352,7 @@ class SetupCog(commands.Cog):
 
     @app_commands.command(
         name="setup",
-        description="[ADMIN] Stwórz strukturę kanałów i ról serwera ZiutekCraft",
+        description="[ADMIN] Synchronizuj strukturę kanałów i ról serwera",
     )
     @app_commands.guilds(discord.Object(id=GUILD_ID))
     @app_commands.default_permissions(administrator=True)
@@ -291,6 +362,34 @@ class SetupCog(commands.Cog):
         text = "\n".join(log)
         for chunk in [text[i:i+1900] for i in range(0, len(text), 1900)]:
             await interaction.followup.send(f"```\n{chunk}\n```", ephemeral=True)
+
+    @app_commands.command(
+        name="cleanup",
+        description="[ADMIN] Pokaż i usuń kanały spoza aktualnej struktury serwera",
+    )
+    @app_commands.guilds(discord.Object(id=GUILD_ID))
+    @app_commands.default_permissions(administrator=True)
+    async def cleanup(self, interaction: discord.Interaction):
+        expected = _expected_channel_names()
+        # Ignoruj kanały systemowe (bez nazwy lub zaczynające się od system-)
+        extras = [
+            ch for ch in interaction.guild.text_channels
+            if ch.name not in expected
+        ]
+        if not extras:
+            await interaction.response.send_message(
+                "✅ Brak zbędnych kanałów — struktura jest czysta.", ephemeral=True
+            )
+            return
+
+        names_list = "\n".join(f"• #{ch.name}" for ch in extras)
+        view = CleanupConfirmView(extras)
+        await interaction.response.send_message(
+            f"**Kanały spoza struktury ({len(extras)}):**\n{names_list}\n\n"
+            f"Czy chcesz je usunąć? Tej operacji **nie można cofnąć**.",
+            view=view,
+            ephemeral=True,
+        )
 
     @app_commands.command(
         name="sync-permissions",

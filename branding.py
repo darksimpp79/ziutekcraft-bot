@@ -1,20 +1,21 @@
 """
-ZiutekCraft — centralne stałe brandingowe.
+AssasinCore — centralne stałe brandingowe.
 Zmień BANNER_URL na link do swojej grafiki (imgur, CDN, attachmenty Discord itp.)
 """
 
-# ── Kolory (z grafiki: neonowa zieleń + fiolet) ───────────────────────────────
-GREEN  = 0x00CC44   # neonowa zieleń — "craft" z logo
-PURPLE = 0x7700BB   # fiolet portalu
+# ── Kolory ────────────────────────────────────────────────────────────────────
+GREEN  = 0x00CC44   # neonowa zieleń
+PURPLE = 0x7700BB   # fiolet
 DARK   = 0x111111   # ciemne tło
 RED    = 0xCC2200   # błędy / ostrzeżenia
 GOLD   = 0xFFAA00   # rangi / nagrody
+BLOOD  = 0xAA1111   # akcent assassin
 
 # ── Tekst brandingowy ─────────────────────────────────────────────────────────
-SERVER_NAME = "ZiutekCraft"
-TAGLINE_1   = "Twórz • Graj • Zwyciężaj • Razem"
-TAGLINE_2   = "Twój serwer. Twoja przygoda."
-FOOTER      = "ZiutekCraft ⚔  |  ziutekcraft.pl"
+SERVER_NAME = "Assassin Arena"
+TAGLINE_1   = "Klasa. Kill. Klan. Zwycięstwo."
+TAGLINE_2   = "6 klas. Bez litości. Tylko jeden na szczycie."
+FOOTER      = "Assassin Arena ⚔  |  by ziutek"
 
 # ── Grafiki — wklej URL po wrzuceniu na imgur/CDN ─────────────────────────────
 # Jak wrzucić: przeciągnij obraz na dowolny kanał Discord,

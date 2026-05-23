@@ -26,7 +26,7 @@ async def on_ready():
     await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.playing,
-            name="ZiutekCraft Beta ⚔",
+            name="Assassin Arena ⚔ Beta",
         )
     )
     print(f"[Bot] Online jako {bot.user} ({bot.user.id})")
@@ -44,6 +44,7 @@ async def main():
         await bot.load_extension("cogs.daily_dc")
         await bot.load_extension("cogs.creator")
         await bot.load_extension("cogs.ranks")
+        await bot.load_extension("cogs.info")
         await bot.start(TOKEN)
 
 
