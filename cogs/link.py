@@ -159,6 +159,14 @@ class LinkCog(commands.Cog):
             log.set_footer(text=footer())
             await log_chan.send(embed=log)
 
+        # Natychmiastowy sync LP rangi po połączeniu (bez czekania na 5-min pętlę)
+        try:
+            from cogs.ranks import assign_lp_rank, _get_lp_group
+            lp_group = await asyncio.get_event_loop().run_in_executor(None, _get_lp_group, mc_nick)
+            await assign_lp_rank(member, lp_group)
+        except Exception as e:
+            print(f"[Link] LP rank sync error for {mc_nick}: {e}")
+
     # ── /link-panel — embed z przyciskiem do #🔗-polacz-konto ────────────────
 
     @app_commands.command(

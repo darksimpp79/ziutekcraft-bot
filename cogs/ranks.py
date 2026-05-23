@@ -46,6 +46,7 @@ def _strip_color(text: str) -> str:
 
 def _get_lp_group(nick: str) -> str | None:
     if not RCON_PASSWORD:
+        print("[Ranks] RCON_PASSWORD not set — LP rank sync disabled. Set it in .env to enable.")
         return None
     try:
         from mcrcon import MCRcon
@@ -54,8 +55,8 @@ def _get_lp_group(nick: str) -> str | None:
         match = re.search(r'[Pp]rimary\s+[Gg]roup[:\s]+([a-zA-Z0-9_-]+)', result)
         if match:
             return match.group(1).lower()
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[Ranks] RCON error for {nick}: {e}")
     return None
 
 
