@@ -7,9 +7,11 @@ load_dotenv()
 TOKEN    = os.getenv("DISCORD_TOKEN", "")
 GUILD_ID = int(os.getenv("GUILD_ID", "0"))
 
-# Minecraft server
-MC_IP   = os.getenv("MC_IP", "localhost")
-MC_PORT = int(os.getenv("MC_PORT", "25565"))
+# Minecraft servers (wszystkie na tym samym hoście)
+MC_IP         = os.getenv("MC_IP", "localhost")
+MC_PORT       = int(os.getenv("MC_PORT",       "25567"))  # Assassin backend
+VELOCITY_PORT = int(os.getenv("VELOCITY_PORT", "25565"))  # Velocity proxy (network total)
+SURVIVAL_PORT = int(os.getenv("SURVIVAL_PORT", "25570"))  # Survival backend
 
 # RCON (do whitelisty)
 RCON_HOST     = os.getenv("RCON_HOST", "localhost")

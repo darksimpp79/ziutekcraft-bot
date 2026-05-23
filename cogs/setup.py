@@ -3,22 +3,20 @@ from discord import app_commands
 from discord.ext import commands
 from config import GUILD_ID
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Separator: ・ (U+30FB KATAKANA MIDDLE DOT) — czytelny w pasku kanałów
-# ─────────────────────────────────────────────────────────────────────────────
+# Separator: ・ (U+30FB KATAKANA MIDDLE DOT)
 
 ROLES = [
     {"name": "👑 Admin",          "color": 0xCC0000, "hoist": True},
     {"name": "🛡️ Mod",            "color": 0x0055CC, "hoist": True},
+    {"name": "🔧 Helper",         "color": 0x0099FF, "hoist": True},
     {"name": "⚔ Beta Tester",    "color": 0xAA2200, "hoist": True},
+    {"name": "🌟 Premium+",       "color": 0xFF5500, "hoist": True},
+    {"name": "⭐ Premium",        "color": 0xFFAA00, "hoist": False},
     {"name": "✔ Zweryfikowany",  "color": 0x226600, "hoist": False},
     {"name": "🔗 Połączony",      "color": 0x00AA88, "hoist": False},
     {"name": "📨 Rekruter",       "color": 0xFFAA00, "hoist": False},
     {"name": "🏅 Ambasador",      "color": 0xFFCC00, "hoist": False},
     {"name": "💎 Legenda Ziutka", "color": 0x00CCFF, "hoist": True},
-    {"name": "🔧 Helper",         "color": 0x0099FF, "hoist": True},
-    {"name": "🌟 Premium+",       "color": 0xFF5500, "hoist": True},
-    {"name": "⭐ Premium",        "color": 0xFFAA00, "hoist": False},
     # Kill ranks
     {"name": "⚜ Generał",    "color": 0xFF2222, "hoist": True},
     {"name": "🦅 Pułkownik",  "color": 0xFF6600, "hoist": False},
@@ -42,54 +40,65 @@ STRUCTURE = [
             },
         ],
     },
-    # ── Statystyki ────────────────────────────────────────────────────────────
+    # ── Sieć ZiutekCraft ──────────────────────────────────────────────────────
     {
-        "category": "📊 STATYSTYKI",
+        "category": "🌐 SIEĆ ZIUTEKCRAFT",
         "channels": [
-            {"name": "🟢・status-serwera", "topic": "Status serwera MC — auto co 5 min.",       "read_only": True},
-            {"name": "💀・top-killer",     "topic": "Aktualny lider rankingu killów — auto.",   "read_only": True},
-            {"name": "🏅・sezon",          "topic": "Numer aktywnego sezonu i jego koniec.",     "read_only": True},
-            {"name": "👥・graczy-dc",      "topic": "Liczba członków serwera Discord — auto.",  "read_only": True},
+            {"name": "📢・ogloszenia",  "topic": "Oficjalne ogłoszenia sieci ZiutekCraft.",          "read_only": True},
+            {"name": "📰・aktualnosci", "topic": "Nowości, aktualizacje, zmiany na serwerach.",      "read_only": True},
+            {"name": "📜・regulamin",   "topic": "Zasady sieci — obowiązkowe dla wszystkich.",        "read_only": True},
+            {"name": "🌟・konkursy",    "topic": "Aktywne konkursy i eventy na sieci.",              "read_only": True},
+            {"name": "🔔・changelog",   "topic": "Historia zmian pluginów i serwerów.",              "read_only": True},
         ],
     },
     # ── Start ─────────────────────────────────────────────────────────────────
     {
         "category": "🚀 START",
         "channels": [
-            {"name": "👋・powitalnia",     "topic": "Powitanie nowych graczy.",                                        "read_only": True},
-            {"name": "📖・jak-zaczac",     "topic": "Przewodnik dla nowych: klasy, rundy, tokeny.",                    "read_only": True},
-            {"name": "🔑・dolacz-do-bety", "topic": "Kliknij przycisk, wpisz nick MC — trafisz na whitelist!",        "read_only": True},
+            {"name": "👋・powitalnia",   "topic": "Powitanie nowych graczy.",                        "read_only": True},
+            {"name": "🔗・polacz-konto", "topic": "Połącz konto Discord z Minecraft.",              "read_only": True},
         ],
     },
-    # ── Informacje ────────────────────────────────────────────────────────────
+    # ── Statystyki (kanały głosowe jako tablice wyników) ──────────────────────
     {
-        "category": "📋 INFORMACJE",
+        "category": "📊 STATYSTYKI",
         "channels": [
-            {"name": "📢・ogloszenia", "topic": "Oficjalne ogłoszenia serwera.",                                      "read_only": True},
-            {"name": "🔔・changelog",  "topic": "Historia zmian pluginu — nowe wersje, poprawki, balans.",            "read_only": True},
-            {"name": "📜・regulamin",  "topic": "Zasady serwera — przeczytaj przed grą.",                             "read_only": True},
-            {"name": "💰・cennik",     "topic": "Koszty ulepszeń, klanów, prestiżu — tokeny i znaczki.",              "read_only": True},
-            {"name": "🏰・klany",      "topic": "System klanowy — jak działają klany, ulepszenia, wkład osobisty.",   "read_only": True},
-            {"name": "💜・boosty",     "topic": "Aktywne boosty Discord i ich bonusy.",                               "read_only": True},
-            {"name": "🌟・konkursy",   "topic": "Aktywne konkursy i eventy.",                                         "read_only": True},
+            {"name": "🌐 Sieć: …",          "type": "voice", "stats_display": True},
+            {"name": "⚔ Assassin: …",       "type": "voice", "stats_display": True},
+            {"name": "🌲 Survival: wkrótce", "type": "voice", "stats_display": True},
+            {"name": "👥 Discord: …",        "type": "voice", "stats_display": True},
+            {"name": "🔗 Połączonych: …",    "type": "voice", "stats_display": True},
+        ],
+    },
+    # ── Assassin Arena ────────────────────────────────────────────────────────
+    {
+        "category": "⚔ ASSASSIN ARENA",
+        "channels": [
+            {"name": "🟢・status-serwera",  "topic": "Status serwera Assassin Arena — auto co 5 min.", "read_only": True},
+            {"name": "🔑・dolacz-do-bety",  "topic": "Wpisz nick MC aby dołączyć do bety!",           "read_only": True},
+            {"name": "📖・jak-zaczac",      "topic": "Przewodnik dla nowych: klasy, rundy, tokeny.",   "read_only": True},
+            {"name": "💰・cennik",          "topic": "Ekonomia: żetony, monety, koszty ulepszeń.",     "read_only": True},
+            {"name": "🏰・klany",           "topic": "System klanowy — tworzenie, poziomy, ulepszenia.","read_only": True},
+            {"name": "💬・assassin-czat",   "topic": "Czat dla beta testerów Assassin Arena.",         "beta_only": True},
+            {"name": "🐛・bugi",            "topic": "Zgłoś buga — kliknij przycisk.",                "beta_only": True, "read_only": True},
+            {"name": "💡・sugestie",        "topic": "Dodaj sugestię — kliknij przycisk.",            "beta_only": True, "read_only": True},
+            {"name": "✅・naprawione",      "topic": "Zamknięte bugi i wdrożone sugestie.",           "beta_only": True, "read_only": True},
+        ],
+    },
+    # ── Survival ─────────────────────────────────────────────────────────────
+    {
+        "category": "🌲 SURVIVAL",
+        "channels": [
+            {"name": "📣・survival-info", "topic": "Informacje o nadchodzącym serwerze Survival.", "read_only": True},
         ],
     },
     # ── Społeczność ───────────────────────────────────────────────────────────
     {
         "category": "🔥 SPOŁECZNOŚĆ",
         "channels": [
-            {"name": "💬・ogolny",   "topic": "Ogólna rozmowa o serwerze i nie tylko."},
-            {"name": "🖼・screeny",  "topic": "Screenshoty i klipy z rozgrywki."},
-            {"name": "⭐・propozycje","topic": "Pomysły na nowe funkcje i zmiany w grze."},
-        ],
-    },
-    # ── Gra ───────────────────────────────────────────────────────────────────
-    {
-        "category": "🎮 GRA",
-        "channels": [
-            {"name": "💀・kill-feed",   "topic": "Killstreaki 10+, first blood, rekordy.",               "read_only": True},
-            {"name": "🏆・rankingi",    "topic": "Top 10 graczy i klanów — co godzinę.",                 "read_only": True},
-            {"name": "📝・patch-notes", "topic": "Szczegółowe notki do każdej aktualizacji pluginu.",    "read_only": True},
+            {"name": "💬・ogolny",    "topic": "Ogólna rozmowa o sieci ZiutekCraft i nie tylko."},
+            {"name": "🖼・screeny",   "topic": "Screenshoty i klipy z rozgrywki."},
+            {"name": "🗣・off-topic", "topic": "Rozmowy niezwiązane z graniem."},
         ],
     },
     # ── Bot ───────────────────────────────────────────────────────────────────
@@ -98,31 +107,16 @@ STRUCTURE = [
         "channels": [
             {
                 "name": "🤖・komendy",
-                "topic": "Komendy bota: /daily /stats /zaproszenia /top /polacz — odpowiedzi tylko dla Ciebie.",
+                "topic": "Komendy bota: /daily /stats /zaproszenia — odpowiedzi tylko dla Ciebie.",
                 "no_history": True,
             },
-            {
-                "name": "🔗・polacz-konto",
-                "topic": "Kliknij przycisk aby połączyć konto Discord z Minecraft.",
-                "read_only": True,
-            },
-        ],
-    },
-    # ── Beta ─────────────────────────────────────────────────────────────────
-    {
-        "category": "🎟 BETA",
-        "channels": [
-            {"name": "💬・beta-czat",  "topic": "Czat dla beta testerów.",                               "beta_only": True},
-            {"name": "🐛・bugi",       "topic": "Kliknij przycisk aby zgłosić buga.",                    "beta_only": True, "read_only": True},
-            {"name": "💡・sugestie",   "topic": "Kliknij przycisk aby dodać sugestię.",                  "beta_only": True, "read_only": True},
-            {"name": "✅・naprawione", "topic": "Zamknięte bugi i wdrożone sugestie.",                   "beta_only": True, "read_only": True},
         ],
     },
     # ── Pomoc ─────────────────────────────────────────────────────────────────
     {
         "category": "🎫 POMOC",
         "channels": [
-            {"name": "🎫・ticket", "topic": "Otwórz ticket jeśli masz problem lub pytanie do staffu.", "read_only": True},
+            {"name": "🎫・ticket", "topic": "Otwórz ticket jeśli masz problem.", "read_only": True},
         ],
     },
     # ── Staff ─────────────────────────────────────────────────────────────────
@@ -136,19 +130,19 @@ STRUCTURE = [
             {"name": "🔧・bot-komendy", "topic": "Komendy administracyjne bota."},
         ],
     },
-    # ── Kanały głosowe ────────────────────────────────────────────────────────
+    # ── Głosowy ───────────────────────────────────────────────────────────────
     {
         "category": "🎙️ GŁOSOWY",
         "voice_category": True,
         "channels": [
-            {"name": "💬 MAX 2",      "type": "voice", "user_limit": 2, "count": 3},
-            {"name": "💬 MAX 3",      "type": "voice", "user_limit": 3, "count": 3},
-            {"name": "💬 MAX 4",      "type": "voice", "user_limit": 4, "count": 2},
-            {"name": "💬 MAX 5",      "type": "voice", "user_limit": 5, "count": 2},
-            {"name": "🔊 UNLIMITED",  "type": "voice", "user_limit": 0, "count": 2},
+            {"name": "💬 MAX 2",     "type": "voice", "user_limit": 2, "count": 3},
+            {"name": "💬 MAX 3",     "type": "voice", "user_limit": 3, "count": 3},
+            {"name": "💬 MAX 4",     "type": "voice", "user_limit": 4, "count": 2},
+            {"name": "💬 MAX 5",     "type": "voice", "user_limit": 5, "count": 2},
+            {"name": "🔊 UNLIMITED", "type": "voice", "user_limit": 0, "count": 2},
         ],
     },
-    # ── Własne kanały (dynamiczne) ────────────────────────────────────────────
+    # ── Własne kanały ─────────────────────────────────────────────────────────
     {
         "category": "🔊 WŁASNE KANAŁY",
         "voice_category": True,
@@ -169,10 +163,7 @@ def _ow(read=True, send=True) -> discord.PermissionOverwrite:
 
 
 def _vow(view=True, conn=True) -> discord.PermissionOverwrite:
-    """Voice overwrite — view and connect."""
-    return discord.PermissionOverwrite(
-        view_channel=view, connect=conn, speak=conn,
-    )
+    return discord.PermissionOverwrite(view_channel=view, connect=conn, speak=conn)
 
 
 def _build_overwrites(ch_def: dict, staff_only: bool, roles: dict) -> dict:
@@ -182,21 +173,29 @@ def _build_overwrites(ch_def: dict, staff_only: bool, roles: dict) -> dict:
     beta     = roles.get("beta")
     verified = roles.get("verified")
 
-    is_voice   = ch_def.get("type") == "voice"
-    read_only  = ch_def.get("read_only", False)
-    ev_vis     = ch_def.get("everyone_read", False)
-    beta_only  = ch_def.get("beta_only", False)
-    no_history = ch_def.get("no_history", False)
+    is_voice      = ch_def.get("type") == "voice"
+    stats_display = ch_def.get("stats_display", False)
+    read_only     = ch_def.get("read_only", False)
+    ev_vis        = ch_def.get("everyone_read", False)
+    beta_only     = ch_def.get("beta_only", False)
+    no_history    = ch_def.get("no_history", False)
+
+    if stats_display:
+        # Visible but unconnectable — pure sidebar scoreboard
+        ow: dict = {everyone: discord.PermissionOverwrite(view_channel=False, connect=False)}
+        if verified: ow[verified] = discord.PermissionOverwrite(view_channel=True, connect=False)
+        if admin:    ow[admin]    = discord.PermissionOverwrite(view_channel=True, connect=False)
+        if mod:      ow[mod]      = discord.PermissionOverwrite(view_channel=True, connect=False)
+        return ow
 
     if is_voice:
-        ow: dict = {}
-        ow[everyone] = _vow(False, False)
+        ow = {everyone: _vow(False, False)}
         if verified: ow[verified] = _vow(True, True)
         if admin:    ow[admin]    = _vow(True, True)
         if mod:      ow[mod]      = _vow(True, True)
         return ow
 
-    ow: dict = {}
+    ow = {}
     if ev_vis:
         ow[everyone] = _ow(True, False)
         if verified: ow[verified] = _ow(True, False)
@@ -224,7 +223,6 @@ def _build_overwrites(ch_def: dict, staff_only: bool, roles: dict) -> dict:
 
 
 def _expected_channel_names() -> set[str]:
-    """Returns expected TEXT channel names only (voice excluded)."""
     names: set[str] = set()
     for cat_def in STRUCTURE:
         for ch_def in cat_def["channels"]:
@@ -238,7 +236,7 @@ def _expected_channel_names() -> set[str]:
 async def build_server(guild: discord.Guild) -> list[str]:
     log: list[str] = []
 
-    # ── 1. Role ───────────────────────────────────────────────────────────────
+    # 1. Role
     log.append("**Tworzenie / weryfikacja ról...**")
     r: dict[str, discord.Role] = {}
     for rd in ROLES:
@@ -252,7 +250,7 @@ async def build_server(guild: discord.Guild) -> list[str]:
                 name=rd["name"],
                 color=discord.Color(rd["color"]),
                 hoist=rd.get("hoist", False),
-                reason="AssasinBot /setup",
+                reason="ZiutekBot /setup",
             )
             r[role.name] = role
             log.append(f"  ✅ {role.name}")
@@ -268,35 +266,35 @@ async def build_server(guild: discord.Guild) -> list[str]:
         "linked":   r.get("🔗 Połączony"),
     }
 
-    # ── 2. Blokada @everyone ──────────────────────────────────────────────────
+    # 2. Blokada @everyone
     log.append("\n**Blokowanie @everyone...**")
     try:
-        await guild.default_role.edit(permissions=discord.Permissions.none(), reason="AssasinBot /setup")
+        await guild.default_role.edit(permissions=discord.Permissions.none(), reason="ZiutekBot /setup")
         log.append("  ✅ @everyone = brak uprawnień")
     except Exception as e:
         log.append(f"  ⚠ @everyone: {e}")
 
-    # ── 3. Uprawnienia ról ────────────────────────────────────────────────────
+    # 3. Uprawnienia ról bazowych
     base_perms = discord.Permissions(
         read_messages=True, send_messages=True, read_message_history=True,
         embed_links=True, attach_files=True, add_reactions=True,
         use_application_commands=True,
     )
-    for key, label in [("verified", "Zweryfikowany"), ("linked", "Połączony")]:
+    for key in ("verified", "linked"):
         role = roles.get(key)
         if role:
             try:
-                await role.edit(permissions=base_perms, reason="AssasinBot /setup")
-                log.append(f"  ✅ {label} = podstawowe uprawnienia")
+                await role.edit(permissions=base_perms, reason="ZiutekBot /setup")
+                log.append(f"  ✅ {role.name} = podstawowe uprawnienia")
             except Exception as e:
-                log.append(f"  ⚠ {label}: {e}")
+                log.append(f"  ⚠ {role.name}: {e}")
 
-    # ── 4. Kategorie i kanały ─────────────────────────────────────────────────
+    # 4. Kategorie i kanały
     log.append("\n**Synchronizacja kategorii i kanałów...**")
     for cat_def in STRUCTURE:
-        cat_name      = cat_def["category"]
-        staff_only    = cat_def.get("staff_only", False)
-        voice_cat     = cat_def.get("voice_category", False)
+        cat_name   = cat_def["category"]
+        staff_only = cat_def.get("staff_only", False)
+        voice_cat  = cat_def.get("voice_category", False)
 
         if voice_cat:
             cat_ow = {
@@ -315,39 +313,46 @@ async def build_server(guild: discord.Guild) -> list[str]:
         existing_cat = discord.utils.get(guild.categories, name=cat_name)
         if existing_cat:
             try:
-                await existing_cat.edit(overwrites=cat_ow, reason="AssasinBot /setup sync")
-                log.append(f"  🔄 {cat_name} (uprawnienia zaktualizowane)")
+                await existing_cat.edit(overwrites=cat_ow, reason="ZiutekBot /setup sync")
+                log.append(f"  🔄 {cat_name}")
             except Exception as e:
                 log.append(f"  ⚠ {cat_name}: {e}")
             cat = existing_cat
         else:
             try:
-                cat = await guild.create_category(cat_name, overwrites=cat_ow, reason="AssasinBot /setup")
+                cat = await guild.create_category(cat_name, overwrites=cat_ow, reason="ZiutekBot /setup")
                 log.append(f"  ✅ {cat_name} (nowa)")
             except Exception as e:
                 log.append(f"  ❌ {cat_name}: {e}")
                 continue
 
         for ch_def in cat_def["channels"]:
-            ch_name  = ch_def["name"]
-            is_voice = ch_def.get("type") == "voice"
-            ow       = _build_overwrites(ch_def, staff_only, roles)
+            ch_name       = ch_def["name"]
+            is_voice      = ch_def.get("type") == "voice"
+            stats_display = ch_def.get("stats_display", False)
+            ow            = _build_overwrites(ch_def, staff_only, roles)
 
             if is_voice:
-                count    = ch_def.get("count", 1)
-                ul       = ch_def.get("user_limit", 0)
-                existing = [c for c in guild.voice_channels
-                            if c.name == ch_name and c.category and c.category.id == cat.id]
-                needed   = count - len(existing)
+                count = ch_def.get("count", 1)
+                ul    = ch_def.get("user_limit", 0)
+
+                if stats_display:
+                    # Match by prefix before ":" — name changes as stats update
+                    prefix   = ch_name.split(":")[0].strip()
+                    existing = [c for c in guild.voice_channels
+                                if c.name.startswith(prefix) and c.category_id == cat.id]
+                else:
+                    existing = [c for c in guild.voice_channels
+                                if c.name == ch_name and c.category_id == cat.id]
+
                 if existing:
-                    log.append(f"    ↩ 🔊 {ch_name} ×{len(existing)} (już istnieje)")
-                for _ in range(max(0, needed)):
+                    log.append(f"    ↩ 🔊 {ch_name} ×{len(existing)}")
+                for _ in range(max(0, count - len(existing))):
                     try:
                         await guild.create_voice_channel(
                             ch_name, category=cat,
-                            user_limit=ul,
-                            overwrites=ow,
-                            reason="AssasinBot /setup",
+                            user_limit=ul, overwrites=ow,
+                            reason="ZiutekBot /setup",
                         )
                         log.append(f"    ✅ 🔊 {ch_name} (nowy)")
                     except Exception as e:
@@ -357,12 +362,10 @@ async def build_server(guild: discord.Guild) -> list[str]:
                 if existing_ch:
                     try:
                         await existing_ch.edit(
-                            overwrites=ow,
-                            topic=ch_def.get("topic", ""),
-                            category=cat,
-                            reason="AssasinBot /setup sync",
+                            overwrites=ow, topic=ch_def.get("topic", ""),
+                            category=cat, reason="ZiutekBot /setup sync",
                         )
-                        log.append(f"    🔄 #{ch_name} (zaktualizowany)")
+                        log.append(f"    🔄 #{ch_name}")
                     except Exception as e:
                         log.append(f"    ⚠ #{ch_name}: {e}")
                 else:
@@ -370,8 +373,7 @@ async def build_server(guild: discord.Guild) -> list[str]:
                         await guild.create_text_channel(
                             ch_name, category=cat,
                             topic=ch_def.get("topic", ""),
-                            overwrites=ow,
-                            reason="AssasinBot /setup",
+                            overwrites=ow, reason="ZiutekBot /setup",
                         )
                         log.append(f"    ✅ #{ch_name} (nowy)")
                     except Exception as e:
@@ -379,14 +381,14 @@ async def build_server(guild: discord.Guild) -> list[str]:
 
     log.append("\n✅ **Setup zakończony!**")
     log.append("\n**Następne kroki:**")
-    log.append("1. `/cleanup` — usuń stare kanały ze starymi nazwami (-)")
+    log.append("1. `/cleanup` — usuń stare kanały")
     log.append("2. `/verify-panel` w #✅・weryfikacja")
     log.append("3. `/beta-panel` w #🔑・dolacz-do-bety")
     log.append("4. `/link-panel` w #🔗・polacz-konto")
     log.append("5. `/bug-panel` w #🐛・bugi")
     log.append("6. `/suggestion-panel` w #💡・sugestie")
     log.append("7. `/ticket-panel` w #🎫・ticket")
-    log.append("8. `/info-setup` — wypełnij kanały informacyjne")
+    log.append("8. `/info-setup` — embedy informacyjne")
     return log
 
 
@@ -403,7 +405,7 @@ class CleanupConfirmView(discord.ui.View):
         deleted, errors = [], []
         for ch in self.channels_to_delete:
             try:
-                await ch.delete(reason="AssasinBot /cleanup")
+                await ch.delete(reason="ZiutekBot /cleanup")
                 deleted.append(f"🗑 #{ch.name}")
             except Exception as e:
                 errors.append(f"❌ #{ch.name}: {e}")
