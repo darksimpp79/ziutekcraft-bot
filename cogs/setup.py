@@ -120,7 +120,7 @@ STRUCTURE = [
         "channels": [
             {"name": "💬-beta-czat",  "topic": "Czat dla beta testerów.", "beta_only": True},
             {"name": "🐛-bugi",       "topic": "Kliknij przycisk aby zgłosić buga.", "beta_only": True, "read_only": True},
-            {"name": "💡-sugestie",   "topic": "Pomysły i propozycje zmian w rozgrywce.", "beta_only": True},
+            {"name": "💡-sugestie",   "topic": "Kliknij przycisk aby dodać sugestię.", "beta_only": True, "read_only": True},
             {"name": "✅-naprawione", "topic": "Zamknięte bugi i wdrożone sugestie.", "beta_only": True, "read_only": True},
         ],
     },

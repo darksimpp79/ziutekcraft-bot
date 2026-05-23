@@ -7,6 +7,7 @@ from cogs.verify import VerifyView
 from cogs.link import LinkView
 from cogs.ticket import TicketView, TicketCloseView
 from cogs.bugs import BugPanelView, BugFixView
+from cogs.suggestions import SuggestionPanelView, SuggestionStatusView
 
 intents = discord.Intents.default()
 intents.members = True
@@ -24,6 +25,8 @@ async def on_ready():
     bot.add_view(TicketCloseView())
     bot.add_view(BugPanelView())
     bot.add_view(BugFixView())
+    bot.add_view(SuggestionPanelView())
+    bot.add_view(SuggestionStatusView())
 
     try:
         synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
@@ -55,6 +58,7 @@ async def main():
         await bot.load_extension("cogs.info")
         await bot.load_extension("cogs.ticket")
         await bot.load_extension("cogs.bugs")
+        await bot.load_extension("cogs.suggestions")
         await bot.start(TOKEN)
 
 
