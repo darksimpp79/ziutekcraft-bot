@@ -79,9 +79,12 @@ class LinkCog(commands.Cog):
         app.router.add_get("/api/linked", self._handle_linked)
         self._runner = web.AppRunner(app)
         await self._runner.setup()
-        site = web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT)
-        await site.start()
-        print(f"[Link] HTTP webhook server on port {LINK_BOT_PORT}")
+        await web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT).start()
+        try:
+            await web.TCPSite(self._runner, "::", LINK_BOT_PORT).start()
+        except Exception:
+            pass
+        print(f"[Link] HTTP webhook server on port {LINK_BOT_PORT} (IPv4+IPv6)")
 
     async def cog_unload(self):
         if self._runner:

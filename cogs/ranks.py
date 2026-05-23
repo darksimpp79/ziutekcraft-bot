@@ -168,8 +168,11 @@ class RanksCog(commands.Cog):
         app.router.add_get("/api/killrank", self._handle_killrank)
         self._runner = web.AppRunner(app)
         await self._runner.setup()
-        site = web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT + 1)
-        await site.start()
+        await web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT + 1).start()
+        try:
+            await web.TCPSite(self._runner, "::", LINK_BOT_PORT + 1).start()
+        except Exception:
+            pass
         print(f"[Ranks] Kill rank webhook on port {LINK_BOT_PORT + 1}")
 
     # ── Webhook: MC plugin → bot on kill milestone ────────────────────────────
