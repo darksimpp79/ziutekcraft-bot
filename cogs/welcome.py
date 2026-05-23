@@ -13,16 +13,16 @@ class WelcomeCog(commands.Cog):
         if member.guild.id != GUILD_ID:
             return
 
-        # ── DM powitalny ──────────────────────────────────────────────────────
+        # DM powitalny
         embed = discord.Embed(
             title=f"⚔  Witaj na {SERVER_NAME}, {member.display_name}!",
             description=(
                 f"Cieszę się, że tu jesteś!\n\n"
                 f"**Żeby uzyskać dostęp do serwera:**\n"
-                f”Wejdź na kanał **#✅・weryfikacja**, kliknij przycisk\n”
-                f'i rozwiąż działanie — dostaniesz dostęp do serwera.\n\n'
-                f”**Chcesz grać w becie?**\n”
-                f”Po weryfikacji idź do **#🔑・dolacz-do-bety**.\n”
+                f"Wejdź na kanał **#✅・weryfikacja**, kliknij przycisk\n"
+                f"i rozwiąż działanie — dostaniesz dostęp do serwera.\n\n"
+                f"**Chcesz grać w becie?**\n"
+                f"Po weryfikacji idź do **#\U0001f511・dolacz-do-bety**.\n"
                 f"Wpisujesz nick MC → automatyczny whitelist!\n\n"
                 f"━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"*{TAGLINE_2}*"
@@ -40,12 +40,12 @@ class WelcomeCog(commands.Cog):
         except discord.Forbidden:
             pass  # DM zablokowane
 
-        # ── Powiadomienie w #👋・powitalnia (kasuje się po 30s) ─────────────
-        welcome_chan = discord.utils.get(member.guild.text_channels, name="👋・powitalnia")
+        # Powiadomienie w #powitalnia (kasuje się po 30s)
+        welcome_chan = discord.utils.get(member.guild.text_channels, name="\U0001f44b・powitalnia")
         if welcome_chan:
             try:
                 await welcome_chan.send(
-                    f"👋 {member.mention} dołączył do serwera! Witamy!",
+                    f"\U0001f44b {member.mention} dołączył do serwera! Witamy!",
                     delete_after=30,
                 )
             except discord.Forbidden:
@@ -56,10 +56,10 @@ class WelcomeCog(commands.Cog):
         if member.guild.id != GUILD_ID:
             return
 
-        staff_chan = discord.utils.get(member.guild.text_channels, name="📊・staff-czat")
+        staff_chan = discord.utils.get(member.guild.text_channels, name="\U0001f4ca・staff-czat")
         if staff_chan:
             embed = discord.Embed(
-                description=f"👋 **{member}** (`{member.id}`) opuścił serwer.",
+                description=f"\U0001f44b **{member}** (`{member.id}`) opuścił serwer.",
                 color=0x555555,
             )
             embed.set_footer(text=footer())
