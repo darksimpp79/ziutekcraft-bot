@@ -4,11 +4,9 @@ from aiohttp import web
 import discord
 from discord import app_commands
 from discord.ext import commands
-from config import GUILD_ID, LINK_BOT_PORT, LINKED_ROLE_ID, LINK_LOG_CHAN_ID, RCON_HOST, RCON_PORT, RCON_PASSWORD
+from config import GUILD_ID, LINK_BOT_PORT, LINKED_ROLE_ID, LINK_LOG_CHAN_ID
 from branding import GREEN, RED, PURPLE, THUMBNAIL_URL, footer
 import link_store
-from rcon_utils import rcon_command
-import pending_rewards
 
 log = logging.getLogger(__name__)
 
@@ -191,15 +189,6 @@ class LinkCog(commands.Cog):
             log.add_field(name="Nick MC", value=f"`{mc_nick}`",                  inline=True)
             log.set_footer(text=footer())
             await log_chan.send(embed=log)
-
-        # Grant link reward tokens via RCON
-        if RCON_PASSWORD:
-            try:
-                rcon_command(RCON_HOST, RCON_PORT, RCON_PASSWORD, f"dcreward {mc_nick} {LINK_TOKENS}")
-                log.info("Link reward granted: %s +%d tokens", mc_nick, LINK_TOKENS)
-            except Exception as e:
-                log.warning("RCON grant failed for %s — queuing pending: %s", mc_nick, e)
-                pending_rewards.add(discord_id, mc_nick, LINK_TOKENS, "link_reward")
 
         # Natychmiastowy sync LP rangi po połączeniu (bez czekania na 5-min pętlę)
         try:
