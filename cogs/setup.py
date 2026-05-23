@@ -75,6 +75,7 @@ STRUCTURE = [
             {"name": "🔔-changelog",   "topic": "Historia zmian pluginu — nowe wersje, poprawki, balans.", "read_only": True},
             {"name": "📜-regulamin",   "topic": "Zasady serwera — przeczytaj przed grą.", "read_only": True},
             {"name": "💰-cennik",      "topic": "Koszty ulepszeń, klanów, prestiżu — tokeny i znaczki.", "read_only": True},
+            {"name": "🏰-klany",       "topic": "System klanowy — jak działają klany, ulepszenia, wkład osobisty.", "read_only": True},
             {"name": "💜-boosty",      "topic": "Aktywne boosty Discord i ich bonusy.", "read_only": True},
             {"name": "🌟-konkursy",    "topic": "Aktywne konkursy i eventy.", "read_only": True},
         ],
