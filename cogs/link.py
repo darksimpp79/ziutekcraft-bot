@@ -10,6 +10,64 @@ import link_store
 LINK_TOKENS = 50
 
 
+# ── Modal: wpisz nick MC ──────────────────────────────────────────────────────
+
+class LinkModal(discord.ui.Modal, title="🔗 Połącz konto Minecraft"):
+    nick = discord.ui.TextInput(
+        label="Nick Minecraft",
+        placeholder="Wpisz swój nick w grze (3–16 znaków)...",
+        min_length=3,
+        max_length=16,
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        discord_id = interaction.user.id
+        mc_nick    = self.nick.value.strip()
+
+        if link_store.is_linked(discord_id):
+            data = link_store.get_link_by_discord(discord_id)
+            await interaction.response.send_message(
+                f"ℹ️ Jesteś już połączony jako `{data['mc_nick']}`.",
+                ephemeral=True,
+            )
+            return
+
+        code = link_store.create_code(discord_id)
+        embed = discord.Embed(
+            title="🔗  Połącz konto Discord z Minecraft",
+            description=(
+                f"Nick: **`{mc_nick}`**\n\n"
+                f"Wejdź na serwer Minecraft i wpisz:\n\n"
+                f"```\n/linkdc {code}\n```\n"
+                f"Kod ważny przez **10 minut**.\n\n"
+                f"Po potwierdzeniu:\n"
+                f"• **{LINK_TOKENS} znaczków** 🪙\n"
+                f"• Rola **🔗 Połączony**\n"
+                f"• Dostęp do `/daily`"
+            ),
+            color=PURPLE,
+        )
+        if THUMBNAIL_URL:
+            embed.set_thumbnail(url=THUMBNAIL_URL)
+        embed.set_footer(text=footer("DC-MC Link"))
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+# ── Persistent view: przycisk w #🔗-polacz-konto ─────────────────────────────
+
+class LinkView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(
+        label="🔗  Połącz konto",
+        style=discord.ButtonStyle.primary,
+        custom_id="link:connect",
+    )
+    async def connect(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(LinkModal())
+
+
 class LinkCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot    = bot
@@ -100,6 +158,33 @@ class LinkCog(commands.Cog):
             log.add_field(name="Nick MC", value=f"`{mc_nick}`",                  inline=True)
             log.set_footer(text=footer())
             await log_chan.send(embed=log)
+
+    # ── /link-panel — embed z przyciskiem do #🔗-polacz-konto ────────────────
+
+    @app_commands.command(
+        name="link-panel",
+        description="[ADMIN] Wyślij panel połączenia konta DC-MC (embed + przycisk)",
+    )
+    @app_commands.guilds(discord.Object(id=GUILD_ID))
+    @app_commands.default_permissions(administrator=True)
+    async def link_panel(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="🔗  Połącz konto Discord z Minecraft",
+            description=(
+                "Kliknij przycisk poniżej i wpisz swój **nick Minecraft**.\n"
+                "Następnie wejdź na serwer MC i użyj komendy, którą otrzymasz.\n\n"
+                "**Nagroda za pierwsze połączenie:**\n"
+                f"• `+{LINK_TOKENS}` znaczków 🪙\n"
+                "• Rola **🔗 Połączony**\n"
+                "• Dostęp do `/daily` — codzienne nagrody\n\n"
+                "*Połączenie możesz wykonać tylko raz. Jeden nick MC = jedno konto Discord.*"
+            ),
+            color=PURPLE,
+        )
+        if THUMBNAIL_URL:
+            embed.set_thumbnail(url=THUMBNAIL_URL)
+        embed.set_footer(text=footer("DC-MC Link"))
+        await interaction.response.send_message(embed=embed, view=LinkView())
 
     # ── /polacz-konto ─────────────────────────────────────────────────────────
 

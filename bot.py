@@ -4,6 +4,8 @@ from discord.ext import commands
 from config import TOKEN, GUILD_ID
 from cogs.beta import BetaSignupView
 from cogs.verify import VerifyView
+from cogs.link import LinkView
+from cogs.ticket import TicketView, TicketCloseView
 
 intents = discord.Intents.default()
 intents.members = True
@@ -16,6 +18,9 @@ async def on_ready():
     # Persistent views — przeżywają restart bota
     bot.add_view(BetaSignupView(bot))
     bot.add_view(VerifyView())
+    bot.add_view(LinkView())
+    bot.add_view(TicketView())
+    bot.add_view(TicketCloseView())
 
     try:
         synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
@@ -45,6 +50,7 @@ async def main():
         await bot.load_extension("cogs.creator")
         await bot.load_extension("cogs.ranks")
         await bot.load_extension("cogs.info")
+        await bot.load_extension("cogs.ticket")
         await bot.start(TOKEN)
 
 

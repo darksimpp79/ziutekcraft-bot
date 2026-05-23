@@ -64,7 +64,7 @@ STRUCTURE = [
         "channels": [
             {"name": "👋-powitalnia",    "topic": "Powitanie nowych graczy — embed z botami.", "read_only": True},
             {"name": "📖-jak-zaczac",    "topic": "Przewodnik dla nowych: klasy, rundy, tokeny.", "read_only": True},
-            {"name": "🔑-dolacz-do-bety","topic": "Kliknij przycisk, wpisz nick MC — trafisz na whitelist!"},
+            {"name": "🔑-dolacz-do-bety","topic": "Kliknij przycisk, wpisz nick MC — trafisz na whitelist!", "read_only": True},
         ],
     },
     # ── Informacje ────────────────────────────────────────────────────────────
@@ -109,8 +109,8 @@ STRUCTURE = [
             },
             {
                 "name": "🔗-polacz-konto",
-                "topic": "Tutorial połączenia konta DC-MC. Użyj /polacz-konto tutaj.",
-                "no_history": True,
+                "topic": "Kliknij przycisk aby połączyć konto Discord z Minecraft.",
+                "read_only": True,
             },
         ],
     },
@@ -128,7 +128,7 @@ STRUCTURE = [
     {
         "category": "🎫 POMOC",
         "channels": [
-            {"name": "🎫-ticket", "topic": "Otwórz ticket jeśli masz problem lub pytanie do staffu."},
+            {"name": "🎫-ticket", "topic": "Otwórz ticket jeśli masz problem lub pytanie do staffu.", "read_only": True},
         ],
     },
     # ── Staff ─────────────────────────────────────────────────────────────────
