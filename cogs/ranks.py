@@ -23,10 +23,22 @@ KILL_RANKS = [
 ALL_KILL_RANK_NAMES = {name for _, name in KILL_RANKS}
 
 # ── LuckPerms group → Discord role ───────────────────────────────────────────
+# Klucz = nazwa grupy PRIMARY w LuckPerms (małe litery, dokładnie jak w /lp groups)
+# Wartość = nazwa roli na Discordzie (musi się zgadzać z ROLES w setup.py)
 LP_ROLE_MAP = {
+    # Staff
+    "admin":        "👑 Admin",
+    "mod":          "🛡️ Mod",
+    "moderator":    "🛡️ Mod",
     "helper":       "🔧 Helper",
+    # Donation
     "premium-plus": "🌟 Premium+",
+    "premiumplus":  "🌟 Premium+",
     "premium":      "⭐ Premium",
+    # Zwykły gracz — dopasuj do nazwy grupy default w twoim LP
+    "gracz":        "✔ Zweryfikowany",
+    "default":      "✔ Zweryfikowany",
+    "player":       "✔ Zweryfikowany",
 }
 ALL_LP_ROLE_NAMES = set(LP_ROLE_MAP.values())
 
@@ -75,14 +87,29 @@ async def assign_kill_rank(member: discord.Member, kills: int) -> bool:
     return True
 
 
+# Role staffu — nigdy nie zdejmujemy jeśli LP nie zwróciło poprawnej grupy
+# (zabezpieczenie: błąd RCON nie odbiera adminowi jego roli)
+STAFF_ROLE_NAMES = {"👑 Admin", "🛡️ Mod"}
+
+
 async def assign_lp_rank(member: discord.Member, lp_group: str | None):
-    target_name = LP_ROLE_MAP.get(lp_group or "")
-    to_remove = [r for r in member.roles
-                 if r.name in ALL_LP_ROLE_NAMES and r.name != target_name]
+    target_name = LP_ROLE_MAP.get((lp_group or "").lower())
+
+    # Jeśli LP nie rozpoznało grupy — nie ruszaj ról staffu, aby nie odebrać ich przez błąd
+    if target_name is None:
+        return
+
+    to_remove = [
+        r for r in member.roles
+        if r.name in ALL_LP_ROLE_NAMES
+        and r.name != target_name
+        # Nigdy nie zdejmuj roli staffu jeśli nowa rola nie jest też staffem
+        and not (r.name in STAFF_ROLE_NAMES and target_name not in STAFF_ROLE_NAMES)
+    ]
     try:
         if to_remove:
-            await member.remove_roles(*to_remove, reason="LP rank sync")
-        if target_name and not any(r.name == target_name for r in member.roles):
+            await member.remove_roles(*to_remove, reason=f"LP sync: {lp_group}")
+        if not any(r.name == target_name for r in member.roles):
             role = discord.utils.get(member.guild.roles, name=target_name)
             if role:
                 await member.add_roles(role, reason=f"LP sync: {lp_group}")
@@ -187,13 +214,12 @@ class RanksCog(commands.Cog):
         lp_group = await asyncio.get_event_loop().run_in_executor(None, _get_lp_group, nick)
         await assign_lp_rank(uzytkownik, lp_group)
 
-        embed = discord.Embed(
-            title="🔄 Sync rang",
-            color=GREEN,
-        )
-        embed.add_field(name="Gracz",    value=uzytkownik.mention,       inline=True)
-        embed.add_field(name="Nick MC",  value=f"`{nick}`",              inline=True)
-        embed.add_field(name="LP Grupa", value=f"`{lp_group or 'brak'}`", inline=True)
+        dc_role = LP_ROLE_MAP.get((lp_group or "").lower(), "—")
+        embed = discord.Embed(title="🔄 Sync rang", color=GREEN)
+        embed.add_field(name="Gracz",       value=uzytkownik.mention,        inline=True)
+        embed.add_field(name="Nick MC",     value=f"`{nick}`",               inline=True)
+        embed.add_field(name="LP Grupa",    value=f"`{lp_group or 'brak'}`", inline=True)
+        embed.add_field(name="Rola DC",     value=dc_role,                   inline=True)
         embed.set_footer(text=footer())
         await interaction.followup.send(embed=embed, ephemeral=True)
 
