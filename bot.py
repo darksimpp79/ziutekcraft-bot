@@ -1,7 +1,32 @@
 import asyncio
+import logging
+import logging.handlers
+from pathlib import Path
 import discord
 from discord.ext import commands
 from config import TOKEN, GUILD_ID
+
+# ── Logging setup ─────────────────────────────────────────────────────────────
+_LOG_DIR = Path(__file__).parent / "logs"
+_LOG_DIR.mkdir(exist_ok=True)
+
+_fmt = logging.Formatter("%(asctime)s [%(levelname)-8s] %(name)s: %(message)s",
+                          datefmt="%Y-%m-%d %H:%M:%S")
+
+_fh = logging.handlers.RotatingFileHandler(
+    _LOG_DIR / "bot.log", maxBytes=5 * 1024 * 1024, backupCount=5, encoding="utf-8"
+)
+_fh.setFormatter(_fmt)
+
+_sh = logging.StreamHandler()
+_sh.setFormatter(_fmt)
+
+logging.basicConfig(level=logging.INFO, handlers=[_fh, _sh])
+# Quieten noisy discord.py internals
+logging.getLogger("discord").setLevel(logging.WARNING)
+logging.getLogger("discord.http").setLevel(logging.WARNING)
+
+log = logging.getLogger("bot")
 from cogs.beta import BetaSignupView
 from cogs.verify import VerifyView
 from cogs.link import LinkView
@@ -30,9 +55,9 @@ async def on_ready():
 
     try:
         synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
-        print(f"[Bot] Zasynkowano {len(synced)} komend na serwer {GUILD_ID}")
+        log.info("Zasynkowano %d komend na serwer %s", len(synced), GUILD_ID)
     except Exception as e:
-        print(f"[Bot] Błąd sync: {e}")
+        log.error("Błąd sync komend: %s", e)
 
     await bot.change_presence(
         activity=discord.Activity(
@@ -40,7 +65,7 @@ async def on_ready():
             name="Assassin Arena ⚔ Beta",
         )
     )
-    print(f"[Bot] Online jako {bot.user} ({bot.user.id})")
+    log.info("Online jako %s (%s)", bot.user, bot.user.id)
 
 
 async def main():

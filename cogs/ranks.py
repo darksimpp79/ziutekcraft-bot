@@ -1,5 +1,6 @@
 import re
 import asyncio
+import logging
 import discord
 from discord import app_commands
 from discord.ext import commands, tasks
@@ -7,6 +8,9 @@ from aiohttp import web
 from config import GUILD_ID, RCON_HOST, RCON_PORT, RCON_PASSWORD, LINK_BOT_PORT
 from branding import GREEN, RED, PURPLE, footer
 import link_store
+import pending_rewards
+
+log = logging.getLogger(__name__)
 
 # ── Kill rank thresholds (sorted descending) ─────────────────────────────────
 KILL_RANKS = [
@@ -123,9 +127,11 @@ class RanksCog(commands.Cog):
         self.bot = bot
         self._runner: web.AppRunner | None = None
         self.lp_sync_task.start()
+        self.flush_pending_task.start()
 
     def cog_unload(self):
         self.lp_sync_task.cancel()
+        self.flush_pending_task.cancel()
         if self._runner:
             asyncio.create_task(self._runner.cleanup())
 
@@ -139,7 +145,7 @@ class RanksCog(commands.Cog):
             await web.TCPSite(self._runner, "::", LINK_BOT_PORT + 1).start()
         except Exception:
             pass
-        print(f"[Ranks] Kill rank webhook on port {LINK_BOT_PORT + 1}")
+        log.info("Kill rank webhook on port %d", LINK_BOT_PORT + 1)
 
     # ── Webhook: MC plugin → bot on kill milestone ────────────────────────────
 
@@ -191,6 +197,28 @@ class RanksCog(commands.Cog):
 
     @lp_sync_task.before_loop
     async def before_lp_sync(self):
+        await self.bot.wait_until_ready()
+
+    # ── Pending reward flush ──────────────────────────────────────────────────
+
+    @tasks.loop(minutes=5)
+    async def flush_pending_task(self):
+        if pending_rewards.count() == 0:
+            return
+        if not RCON_PASSWORD:
+            return
+
+        from rcon_utils import rcon_command as _rc
+
+        def _grant(nick: str, amount: int):
+            _rc(RCON_HOST, RCON_PORT, RCON_PASSWORD, f"dcreward {nick} {amount}")
+
+        delivered, remaining = pending_rewards.flush(_grant)
+        if delivered:
+            log.info("Pending flush: delivered=%d remaining=%d", delivered, remaining)
+
+    @flush_pending_task.before_loop
+    async def before_flush_pending(self):
         await self.bot.wait_until_ready()
 
     # ── /sync-rangi ───────────────────────────────────────────────────────────

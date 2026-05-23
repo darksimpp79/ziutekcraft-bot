@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from aiohttp import web
 import discord
 from discord import app_commands
@@ -7,6 +8,9 @@ from config import GUILD_ID, LINK_BOT_PORT, LINKED_ROLE_ID, LINK_LOG_CHAN_ID, RC
 from branding import GREEN, RED, PURPLE, THUMBNAIL_URL, footer
 import link_store
 from rcon_utils import rcon_command
+import pending_rewards
+
+log = logging.getLogger(__name__)
 
 LINK_TOKENS = 50
 
@@ -131,6 +135,7 @@ class LinkCog(commands.Cog):
 
         link_store.save_link(discord_id, nick, uuid)
         asyncio.create_task(self._post_link(discord_id, nick))
+        log.info("Account linked: discord=%s nick=%s uuid=%s", discord_id, nick, uuid)
 
         return web.json_response({"ok": True, "discord_id": discord_id, "tokens": LINK_TOKENS})
 
@@ -191,9 +196,10 @@ class LinkCog(commands.Cog):
         if RCON_PASSWORD:
             try:
                 rcon_command(RCON_HOST, RCON_PORT, RCON_PASSWORD, f"dcreward {mc_nick} {LINK_TOKENS}")
-                print(f"[Link] Granted {LINK_TOKENS} tokens to {mc_nick} via RCON")
+                log.info("Link reward granted: %s +%d tokens", mc_nick, LINK_TOKENS)
             except Exception as e:
-                print(f"[Link] RCON token grant failed for {mc_nick}: {e}")
+                log.warning("RCON grant failed for %s — queuing pending: %s", mc_nick, e)
+                pending_rewards.add(discord_id, mc_nick, LINK_TOKENS, "link_reward")
 
         # Natychmiastowy sync LP rangi po połączeniu (bez czekania na 5-min pętlę)
         try:
@@ -289,6 +295,7 @@ class LinkCog(commands.Cog):
             return
 
         link_store.delete_link(target.id)
+        log.info("Account unlinked: discord=%s nick=%s (by %s)", target.id, data["mc_nick"], interaction.user)
 
         linked_role = discord.utils.get(interaction.guild.roles, name="🔗 Połączony")
         if linked_role and linked_role in target.roles:

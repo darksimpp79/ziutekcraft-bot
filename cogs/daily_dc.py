@@ -1,4 +1,4 @@
-import json, time
+import json, time, logging
 from pathlib import Path
 import discord
 from discord import app_commands
@@ -7,6 +7,9 @@ from config import GUILD_ID, RCON_HOST, RCON_PORT, RCON_PASSWORD
 from branding import GREEN, GOLD, RED, PURPLE, THUMBNAIL_URL, footer
 import link_store
 from rcon_utils import rcon_command
+import pending_rewards
+
+log = logging.getLogger(__name__)
 
 DATA_DIR   = Path(__file__).parent.parent / "data"
 DAILY_FILE = DATA_DIR / "daily_rewards.json"
@@ -98,6 +101,7 @@ class DailyCog(commands.Cog):
         ok, msg = _rcon_grant(nick, total)
 
         if ok:
+            log.info("Daily claimed: %s +%d (streak %d)", nick, total, streak)
             embed = discord.Embed(
                 title="🎁  Dzienna nagroda odebrana!",
                 color=GREEN,
@@ -115,11 +119,13 @@ class DailyCog(commands.Cog):
                     inline=True,
                 )
         else:
+            log.warning("Daily RCON failed for %s — queuing pending: %s", nick, msg)
+            pending_rewards.add(interaction.user.id, nick, total, f"daily_streak{streak}")
             embed = discord.Embed(
                 title="⚠️  Serwer offline — nagroda zapisana",
                 description=(
-                    f"**{total} znaczków** zostanie przyznanych gdy serwer wróci.\n"
-                    f"Napisz do admina jeśli nagroda nie dotrze.\n```{msg}```"
+                    f"**{total} znaczków** zostanie przyznanych automatycznie gdy serwer wróci.\n"
+                    f"Nie musisz pisać do admina — system retry zadba o dostawę. 🔄"
                 ),
                 color=GOLD,
             )
