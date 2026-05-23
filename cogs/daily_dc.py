@@ -6,6 +6,7 @@ from discord.ext import commands
 from config import GUILD_ID, RCON_HOST, RCON_PORT, RCON_PASSWORD
 from branding import GREEN, GOLD, RED, PURPLE, THUMBNAIL_URL, footer
 import link_store
+from rcon_utils import rcon_command
 
 DATA_DIR   = Path(__file__).parent.parent / "data"
 DAILY_FILE = DATA_DIR / "daily_rewards.json"
@@ -35,9 +36,7 @@ def _rcon_grant(nick: str, amount: int) -> tuple[bool, str]:
     if not RCON_PASSWORD:
         return False, "RCON nie skonfigurowane (brak hasła w .env)"
     try:
-        from mcrcon import MCRcon
-        with MCRcon(RCON_HOST, RCON_PASSWORD, port=RCON_PORT) as mcr:
-            resp = mcr.command(f"dcreward {nick} {amount}")
+        resp = rcon_command(RCON_HOST, RCON_PORT, RCON_PASSWORD, f"dcreward {nick} {amount}")
         return True, resp.strip() or "OK"
     except Exception as e:
         return False, str(e)
