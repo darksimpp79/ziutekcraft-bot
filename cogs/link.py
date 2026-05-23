@@ -4,7 +4,8 @@ from aiohttp import web
 import discord
 from discord import app_commands
 from discord.ext import commands
-from config import GUILD_ID, LINK_BOT_PORT, LINKED_ROLE_ID, LINK_LOG_CHAN_ID
+from config import GUILD_ID, LINK_BOT_PORT, LINKED_ROLE_ID, LINK_LOG_CHAN_ID, RCON_HOST, RCON_PORT, RCON_PASSWORD
+from rcon_utils import rcon_command
 from branding import GREEN, RED, PURPLE, THUMBNAIL_URL, footer
 import link_store
 
@@ -374,8 +375,8 @@ class LinkCog(commands.Cog):
             )
             return
 
-        nick        = data["mc_nick"]
-        reward_was  = data.get("reward_given", False)
+        nick       = data["mc_nick"]
+        reward_was = data.get("reward_given", False)
         link_store.delete_link(discord_id)
         log.info("Force-unlinked: discord=%s nick=%s reward_was=%s (by %s)",
                  discord_id, nick, reward_was, interaction.user)
@@ -390,12 +391,22 @@ class LinkCog(commands.Cog):
                 except discord.Forbidden:
                     pass
 
-        await interaction.response.send_message(
-            f"✅ Usunięto wpis dla `{nick}` (discord: `{discord_id}`).\n"
-            f"reward_given było: `{reward_was}`\n"
-            f"Pamiętaj ustawić `dc_link_reward_given = 0` w SQLite na serwerze MC.",
-            ephemeral=True,
-        )
+        # Reset dc_link_reward_given in MC SQLite via RCON
+        rcon_ok, rcon_msg = False, "RCON nie skonfigurowane"
+        if RCON_PASSWORD:
+            try:
+                rcon_msg = rcon_command(RCON_HOST, RCON_PORT, RCON_PASSWORD,
+                                        f"resetdcreward {nick}")
+                rcon_ok = True
+            except Exception as e:
+                rcon_msg = str(e)
+
+        lines = [
+            f"✅ Usunięto wpis dla `{nick}` (discord: `{discord_id}`).",
+            f"reward_given było: `{reward_was}`",
+            f"MC SQLite reset: {'✅ ' + rcon_msg.strip() if rcon_ok else '⚠️ RCON failed — ' + rcon_msg}",
+        ]
+        await interaction.response.send_message("\n".join(lines), ephemeral=True)
 
 
 async def setup(bot: commands.Bot):
