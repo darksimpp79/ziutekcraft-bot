@@ -331,5 +331,72 @@ class LinkCog(commands.Cog):
         )
 
 
+    # ── /rozlacz-force ────────────────────────────────────────────────────────
+
+    @app_commands.command(
+        name="rozlacz-force",
+        description="[ADMIN] Usuń całkowicie wpis linkowania (DC + reward_given) — do testów",
+    )
+    @app_commands.guilds(discord.Object(id=GUILD_ID))
+    @app_commands.default_permissions(administrator=True)
+    @app_commands.describe(
+        uzytkownik="Użytkownik Discord do rozłączenia",
+        mc_nick="Albo nick MC (jeśli użytkownik niedostępny)",
+    )
+    async def rozlacz_force(
+        self,
+        interaction: discord.Interaction,
+        uzytkownik: discord.Member | None = None,
+        mc_nick: str | None = None,
+    ):
+        if not uzytkownik and not mc_nick:
+            await interaction.response.send_message(
+                "Podaj `uzytkownik` lub `mc_nick`.", ephemeral=True
+            )
+            return
+
+        # Resolve the entry
+        if uzytkownik:
+            data = link_store.get_link_by_discord(uzytkownik.id)
+            discord_id = uzytkownik.id
+        else:
+            all_links = link_store.get_all_links()
+            discord_id = next(
+                (int(did) for did, d in all_links.items()
+                 if d.get("mc_nick", "").lower() == mc_nick.lower()),
+                None,
+            )
+            data = link_store.get_link_by_discord(discord_id) if discord_id else None
+
+        if not data:
+            await interaction.response.send_message(
+                "❌ Nie znaleziono wpisu linkowania.", ephemeral=True
+            )
+            return
+
+        nick        = data["mc_nick"]
+        reward_was  = data.get("reward_given", False)
+        link_store.delete_link(discord_id)
+        log.info("Force-unlinked: discord=%s nick=%s reward_was=%s (by %s)",
+                 discord_id, nick, reward_was, interaction.user)
+
+        # Remove role if member is available
+        member = interaction.guild.get_member(discord_id) if interaction.guild else None
+        if member:
+            linked_role = discord.utils.get(interaction.guild.roles, name="🔗 Połączony")
+            if linked_role and linked_role in member.roles:
+                try:
+                    await member.remove_roles(linked_role, reason="rozlacz-force")
+                except discord.Forbidden:
+                    pass
+
+        await interaction.response.send_message(
+            f"✅ Usunięto wpis dla `{nick}` (discord: `{discord_id}`).\n"
+            f"reward_given było: `{reward_was}`\n"
+            f"Pamiętaj ustawić `dc_link_reward_given = 0` w SQLite na serwerze MC.",
+            ephemeral=True,
+        )
+
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(LinkCog(bot))
