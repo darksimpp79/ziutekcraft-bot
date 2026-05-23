@@ -45,13 +45,38 @@ def _rcon_grant(nick: str, amount: int) -> tuple[bool, str]:
         return False, str(e)
 
 
+def daily_claim(discord_id: int) -> dict:
+    """
+    Atomically claim the daily reward for a Discord user.
+    Returns {"ok": True, "amount": int, "streak": int}
+         or {"ok": False, "wait_seconds": int}
+    """
+    data  = _read()
+    entry = data.get(str(discord_id), {"last_claim": 0, "streak": 0})
+    now   = time.time()
+    diff  = now - entry["last_claim"]
+
+    if diff < COOLDOWN:
+        return {"ok": False, "wait_seconds": int(COOLDOWN - diff)}
+
+    entry["streak"] = (entry.get("streak", 0) + 1) if diff < COOLDOWN * 2 else 1
+    entry["last_claim"] = now
+    data[str(discord_id)] = entry
+    _write(data)
+
+    streak = entry["streak"]
+    bonus  = min((streak - 1) * STREAK_STEP, MAX_BONUS)
+    total  = BASE_TOKENS + bonus
+    return {"ok": True, "amount": total, "streak": streak}
+
+
 class DailyCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.command(
         name="daily",
-        description="Odbierz dzienny bonus znaczków (potrzebne połączone konto MC)",
+        description="Sprawdź kiedy możesz odebrać dzienny bonus (odbierz przez /daily w grze MC)",
     )
     @app_commands.guilds(discord.Object(id=GUILD_ID))
     async def daily(self, interaction: discord.Interaction):
@@ -75,65 +100,34 @@ class DailyCog(commands.Cog):
         entry = data.get(str(discord_id), {"last_claim": 0, "streak": 0})
         now   = time.time()
         diff  = now - entry["last_claim"]
+        streak = entry.get("streak", 0)
+        bonus  = min((streak - 1) * STREAK_STEP, MAX_BONUS) if streak > 0 else 0
+        total  = BASE_TOKENS + bonus
 
         if diff < COOLDOWN:
             remaining = COOLDOWN - diff
             h = int(remaining // 3600)
             m = int((remaining % 3600) // 60)
-            await interaction.response.send_message(
-                f"⏳ Następna nagroda za **{h}h {m}m**. Wróć jutro!",
-                ephemeral=True,
-            )
-            return
-
-        # Streak: continues if claimed within 48h, resets otherwise
-        entry["streak"] = (entry.get("streak", 0) + 1) if diff < COOLDOWN * 2 else 1
-        entry["last_claim"] = now
-        data[str(discord_id)] = entry
-        _write(data)
-
-        streak = entry["streak"]
-        bonus  = min((streak - 1) * STREAK_STEP, MAX_BONUS)
-        total  = BASE_TOKENS + bonus
-        nick   = link["mc_nick"]
-
-        await interaction.response.defer(ephemeral=True)
-        ok, msg = _rcon_grant(nick, total)
-
-        if ok:
-            log.info("Daily claimed: %s +%d (streak %d)", nick, total, streak)
             embed = discord.Embed(
-                title="🎁  Dzienna nagroda odebrana!",
+                title="⏳  Dzienny bonus",
+                description=(
+                    f"Następna nagroda za **{h}h {m}m**.\n\n"
+                    f"Seria: 🔥 **{streak}** dni | Nagroda: **{total}** znaczków\n\n"
+                    f"Odbieraj przez **`/daily`** na serwerze Minecraft."
+                ),
+                color=PURPLE,
+            )
+        else:
+            embed = discord.Embed(
+                title="🎁  Dzienny bonus gotowy!",
+                description=(
+                    f"Możesz odebrać **{total} znaczków**!\n\n"
+                    f"Wejdź na serwer Minecraft i wpisz **`/daily`**."
+                ),
                 color=GREEN,
             )
-            embed.add_field(name="Znaczki",     value=f"`+{total}` 🪙",        inline=True)
-            embed.add_field(name="Seria",       value=f"🔥 **{streak}** dni",  inline=True)
-            if bonus > 0:
-                embed.add_field(name="Bonus serii", value=f"`+{bonus}` za serię", inline=False)
-            embed.add_field(name="Nick MC",     value=f"`{nick}`",             inline=True)
-            if streak < 10:
-                needed  = (10 - streak) * STREAK_STEP
-                embed.add_field(
-                    name="Do max. bonusu",
-                    value=f"Jeszcze **{10 - streak}** dni (+{needed} tokenów)",
-                    inline=True,
-                )
-        else:
-            log.warning("Daily RCON failed for %s — queuing pending: %s", nick, msg)
-            pending_rewards.add(interaction.user.id, nick, total, f"daily_streak{streak}")
-            embed = discord.Embed(
-                title="⚠️  Serwer offline — nagroda zapisana",
-                description=(
-                    f"**{total} znaczków** zostanie przyznanych automatycznie gdy serwer wróci.\n"
-                    f"Nie musisz pisać do admina — system retry zadba o dostawę. 🔄"
-                ),
-                color=GOLD,
-            )
-
-        if THUMBNAIL_URL:
-            embed.set_thumbnail(url=THUMBNAIL_URL)
         embed.set_footer(text=footer("Daily Reward"))
-        await interaction.followup.send(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot: commands.Bot):

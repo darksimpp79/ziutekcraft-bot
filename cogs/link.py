@@ -81,6 +81,7 @@ class LinkCog(commands.Cog):
         app.router.add_get("/api/link",             self._handle_link)
         app.router.add_get("/api/linked",           self._handle_linked)
         app.router.add_get("/api/claim-dc-reward",  self._handle_claim_reward)
+        app.router.add_get("/api/daily/claim",      self._handle_daily_claim)
         self._runner = web.AppRunner(app)
         await self._runner.setup()
         await web.TCPSite(self._runner, "0.0.0.0", LINK_BOT_PORT).start()
@@ -117,6 +118,21 @@ class LinkCog(commands.Cog):
             "mc_nick":       data.get("mc_nick", ""),
             "reward_given":  data.get("reward_given", False),
         })
+
+    # ── GET /api/daily/claim?uuid=XXX — odbiór dziennej nagrody w grze ──────────
+
+    async def _handle_daily_claim(self, request: web.Request) -> web.Response:
+        uuid = request.rel_url.query.get("uuid", "")
+        if not uuid:
+            return web.json_response({"ok": False, "error": "missing uuid"}, status=400)
+        discord_id = link_store.get_discord_id_by_uuid(uuid)
+        if discord_id is None:
+            return web.json_response({"ok": False, "error": "not linked"}, status=404)
+        from cogs.daily_dc import daily_claim
+        result = daily_claim(discord_id)
+        if result["ok"]:
+            return web.json_response(result)
+        return web.json_response(result, status=429)
 
     # ── GET /api/claim-dc-reward?uuid=XXX — atomowo oznacz nagrodę jako odebrana ──
 
