@@ -225,6 +225,78 @@ STRUCTURE_BOTTOM: list[dict] = [
 ]
 
 
+# ── Prywatne sekcje staffu — każda widoczna tylko dla swojej grupy rang ────────
+# ZARZĄD ma dostęp do wszystkich sekcji (cross-access).
+
+ZARZĄD_ROLE_NAMES = [
+    "👑 Właściciel", "🛡️ Współwłaściciel",
+    "⚙️ Menedżer Projektu", "📢 Community Manager",
+]
+
+STRUCTURE_STAFF_PRIVATE: list[dict] = [
+    {
+        "category": "👑 ZARZĄD",
+        "private_roles": ZARZĄD_ROLE_NAMES,
+        "channels": [
+            {"name": "👑・zarząd-czat",        "topic": "Wewnętrzny czat zarządu."},
+            {"name": "📋・plany-strategiczne",  "topic": "Decyzje strategiczne i długoterminowe plany."},
+        ],
+    },
+    {
+        "category": "⚙️ TECHNIKA",
+        "private_roles": ["💻 Główny Technik", "🔧 Technik Serwera", "⚡ Developer Modów",
+                          "🧩 Developer Pluginów", "🌐 Administrator VPS"],
+        "channels": [
+            {"name": "⚙️・technika-czat",  "topic": "Wewnętrzny czat ekipy technicznej."},
+            {"name": "🔧・zadania-dev",    "topic": "Aktualne zadania techniczne i tickety deweloperów."},
+        ],
+    },
+    {
+        "category": "🏗️ TWORZENIE",
+        "private_roles": ["🏗️ Head Builder", "🧱 Builder", "📚 Quest Creator",
+                          "🎨 Grafik", "✨ Projektant UI/FancyMenu"],
+        "channels": [
+            {"name": "🏗️・tworzenie-czat", "topic": "Wewnętrzny czat ekipy budowlanej i kreacyjnej."},
+            {"name": "📐・projekty",        "topic": "Aktywne projekty budowlane, zadania i postępy."},
+        ],
+    },
+    {
+        "category": "🛡️ ADMINISTRACJA",
+        "private_roles": ["⚔️ Head Admin", "🔨 Administrator", "🛠️ Moderator", "🚔 Support"],
+        "channels": [
+            {"name": "🛡️・admin-czat",  "topic": "Wewnętrzny czat administracji."},
+            {"name": "⚠️・kary-log",    "topic": "Log wydanych ostrzeżeń, wyciszeń i banów."},
+            {"name": "📋・rekrutacja",  "topic": "Wnioski o dołączenie do staffu."},
+        ],
+    },
+    {
+        "category": "🧪 TESTY",
+        "private_roles": ["🧪 Head Tester", "🔍 Tester", "⚔ Beta Tester"],
+        "channels": [
+            {"name": "🧪・testy-czat",      "topic": "Wewnętrzny czat ekipy testerów."},
+            {"name": "📊・raporty-testow",  "topic": "Raporty z sesji testowych i podsumowania."},
+        ],
+    },
+    {
+        "category": "📸 MEDIA",
+        "private_roles": ["🎬 YouTube Team", "🎵 TikTok Team", "📸 Media Team", "🎥 Partner / Streamer"],
+        "channels": [
+            {"name": "📸・media-czat",    "topic": "Wewnętrzny czat ekipy medialnej."},
+            {"name": "📅・harmonogram",   "topic": "Harmonogram treści — kto, co i kiedy publikuje."},
+        ],
+    },
+    {
+        "category": "🎉 EVENTY",
+        "private_roles": ["🎉 Event Team"],
+        "channels": [
+            {"name": "🎉・eventy-czat",        "topic": "Wewnętrzny czat organizatorów eventów."},
+            {"name": "📅・planowanie-eventow",  "topic": "Planowanie nadchodzących eventów."},
+            {"name": "🏆・historia-eventow",   "topic": "Archiwum przeprowadzonych eventów.", "read_only": True},
+        ],
+    },
+]
+
+
 # ── Extra modes (persisted across restarts) ───────────────────────────────────
 
 def _load_extra_modes() -> list[dict]:
@@ -531,6 +603,80 @@ async def _add_mode_stats_channel(
         lines.append(f"    ❌ 🔊 {stats_ch_name}: {e}")
 
 
+async def _process_private_section(
+    guild: discord.Guild,
+    cat_def: dict,
+    zarząd_roles: list[discord.Role],
+    lines: list[str],
+) -> None:
+    """Tworzy/aktualizuje prywatną kategorię dostępną tylko dla wybranych rang + ZARZĄD."""
+    cat_name = cat_def["category"]
+
+    # Resolve private roles for this section
+    private_roles: list[discord.Role] = []
+    for rname in cat_def.get("private_roles", []):
+        role = discord.utils.get(guild.roles, name=rname)
+        if role:
+            private_roles.append(role)
+
+    # All roles that can see this category
+    all_allowed = {r.id: r for r in private_roles}
+    for r in zarząd_roles:
+        all_allowed[r.id] = r  # ZARZĄD ma dostęp wszędzie
+
+    # Category overwrites
+    cat_ow: dict = {guild.default_role: _ow(False, False)}
+    for role in all_allowed.values():
+        cat_ow[role] = _ow(True, True)
+
+    existing_cat = discord.utils.get(guild.categories, name=cat_name)
+    if existing_cat:
+        try:
+            await existing_cat.edit(overwrites=cat_ow, reason="ZiutekBot /setup sync")
+            lines.append(f"  🔄 {cat_name}")
+        except Exception as e:
+            lines.append(f"  ⚠ {cat_name}: {e}")
+        cat = existing_cat
+    else:
+        try:
+            cat = await guild.create_category(cat_name, overwrites=cat_ow, reason="ZiutekBot /setup")
+            lines.append(f"  ✅ {cat_name} (nowa)")
+        except Exception as e:
+            lines.append(f"  ❌ {cat_name}: {e}")
+            return
+
+    # Channels
+    for ch_def in cat_def["channels"]:
+        ch_name   = ch_def["name"]
+        read_only = ch_def.get("read_only", False)
+
+        ch_ow: dict = {guild.default_role: _ow(False, False)}
+        for role in private_roles:
+            ch_ow[role] = _ow(True, not read_only)
+        for role in zarząd_roles:
+            ch_ow[role] = _ow(True, True)  # ZARZĄD zawsze może pisać
+
+        existing_ch = discord.utils.get(guild.text_channels, name=ch_name)
+        if existing_ch:
+            try:
+                await existing_ch.edit(
+                    overwrites=ch_ow, topic=ch_def.get("topic", ""),
+                    category=cat, reason="ZiutekBot /setup sync",
+                )
+                lines.append(f"    🔄 #{ch_name}")
+            except Exception as e:
+                lines.append(f"    ⚠ #{ch_name}: {e}")
+        else:
+            try:
+                await guild.create_text_channel(
+                    ch_name, category=cat, topic=ch_def.get("topic", ""),
+                    overwrites=ch_ow, reason="ZiutekBot /setup",
+                )
+                lines.append(f"    ✅ #{ch_name} (nowy)")
+            except Exception as e:
+                lines.append(f"    ❌ #{ch_name}: {e}")
+
+
 def _expected_channel_names() -> set[str]:
     names: set[str] = set()
     for section in (STRUCTURE_TOP, STRUCTURE_BOTTOM):
@@ -545,6 +691,9 @@ def _expected_channel_names() -> set[str]:
         for ch in mode.get("player_channels", []):
             if ch.get("type") != "voice":
                 names.add(ch["name"])
+    for cat_def in STRUCTURE_STAFF_PRIVATE:
+        for ch_def in cat_def["channels"]:
+            names.add(ch_def["name"])
     return names
 
 
@@ -628,6 +777,16 @@ async def build_server(guild: discord.Guild) -> list[str]:
     lines.append("\n**Sekcja dolna...**")
     for cat_def in STRUCTURE_BOTTOM:
         await _process_category(guild, cat_def, roles, lines)
+
+    # 8. Prywatne sekcje staffu (ZARZĄD, TECHNIKA, TWORZENIE, ADMIN, TESTY, MEDIA, EVENTY)
+    lines.append("\n**Sekcje prywatne staffu...**")
+    zarząd_roles = [
+        discord.utils.get(guild.roles, name=n)
+        for n in ZARZĄD_ROLE_NAMES
+    ]
+    zarząd_roles = [r for r in zarząd_roles if r]
+    for cat_def in STRUCTURE_STAFF_PRIVATE:
+        await _process_private_section(guild, cat_def, zarząd_roles, lines)
 
     lines.append("\n✅ **Setup zakończony!**")
     lines.append("\n**Następne kroki:**")
