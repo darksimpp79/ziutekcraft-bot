@@ -277,25 +277,34 @@ def _build_overwrites(
     ev_vis        = ch_def.get("everyone_read", False)
     no_history    = ch_def.get("no_history", False)
 
+    gracz_pre   = roles.get("gracz")
+    veteran_pre = roles.get("veteran")
+
     if stats_display:
         ow: dict = {everyone: discord.PermissionOverwrite(view_channel=False, connect=False)}
-        if verified: ow[verified] = discord.PermissionOverwrite(view_channel=True, connect=False)
+        for pr in (verified, gracz_pre, veteran_pre):
+            if pr: ow[pr] = discord.PermissionOverwrite(view_channel=True, connect=False)
         if admin:    ow[admin]    = discord.PermissionOverwrite(view_channel=True, connect=False)
         if mod:      ow[mod]      = discord.PermissionOverwrite(view_channel=True, connect=False)
         return ow
 
     if is_voice:
         ow = {everyone: _vow(False, False)}
-        if verified: ow[verified] = _vow(True, True)
+        for pr in (verified, gracz_pre, veteran_pre):
+            if pr: ow[pr] = _vow(True, True)
         if admin:    ow[admin]    = _vow(True, True)
         if mod:      ow[mod]      = _vow(True, True)
         return ow
+
+    gracz   = roles.get("gracz")
+    veteran = roles.get("veteran")
 
     ow = {}
     if ev_vis:
         # Public channel — visible even to unverified
         ow[everyone] = _ow(True, False)
-        if verified: ow[verified] = _ow(True, False)
+        for pr in (verified, gracz, veteran):
+            if pr: ow[pr] = _ow(True, False)
         if admin:    ow[admin]    = _ow(True, True)
         if mod:      ow[mod]      = _ow(True, True)
     elif staff_only:
@@ -304,18 +313,20 @@ def _build_overwrites(
         if mod:      ow[mod]      = _ow(True, True)
     elif mode_role is not None:
         # Visible only to mode_role holders (and staff)
-        ow[everyone]  = _ow(False, False)
-        if verified: ow[verified] = _ow(False, False)
+        ow[everyone] = _ow(False, False)
+        for pr in (verified, gracz, veteran):
+            if pr: ow[pr] = _ow(False, False)
         ow[mode_role] = _ow(True, not read_only)
         if admin:    ow[admin]    = _ow(True, True)
         if mod:      ow[mod]      = _ow(True, True)
     else:
-        # Default: visible to verified
+        # Default: visible to all progression tiers (Nowy / Gracz / Weteran)
         ow[everyone] = _ow(False, False)
-        if verified:
-            ow[verified] = _ow(True, not read_only)
-            if no_history:
-                ow[verified].read_message_history = False
+        for pr in (verified, gracz, veteran):
+            if pr:
+                ow[pr] = _ow(True, not read_only)
+                if no_history:
+                    ow[pr].read_message_history = False
         if admin:    ow[admin]    = _ow(True, True)
         if mod:      ow[mod]      = _ow(True, True)
     return ow
@@ -326,7 +337,10 @@ def _resolve_roles(guild: discord.Guild) -> dict:
         "everyone": guild.default_role,
         "admin":    discord.utils.get(guild.roles, name="⚔️ Head Admin"),
         "mod":      discord.utils.get(guild.roles, name="🛠️ Moderator"),
-        "verified": discord.utils.get(guild.roles, name="🎯 Gracz"),
+        # Progresja: Nowy → Gracz → Weteran — wszystkie mają ten sam dostęp
+        "verified": discord.utils.get(guild.roles, name="👋 Nowy"),
+        "gracz":    discord.utils.get(guild.roles, name="🎯 Gracz"),
+        "veteran":  discord.utils.get(guild.roles, name="🏆 Weteran"),
         "linked":   discord.utils.get(guild.roles, name="🔗 Połączony"),
     }
 
@@ -564,8 +578,11 @@ async def build_server(guild: discord.Guild) -> list[str]:
         "everyone": guild.default_role,
         "admin":    r.get("⚔️ Head Admin")  or discord.utils.get(guild.roles, name="⚔️ Head Admin"),
         "mod":      r.get("🛠️ Moderator")   or discord.utils.get(guild.roles, name="🛠️ Moderator"),
-        "verified": r.get("🎯 Gracz")        or discord.utils.get(guild.roles, name="🎯 Gracz"),
-        "linked":   r.get("🔗 Połączony")   or discord.utils.get(guild.roles, name="🔗 Połączony"),
+        # Progresja: Nowy (entry) → Gracz → Weteran — wszystkie mają ten sam dostęp
+        "verified": r.get("👋 Nowy")         or discord.utils.get(guild.roles, name="👋 Nowy"),
+        "gracz":    r.get("🎯 Gracz")        or discord.utils.get(guild.roles, name="🎯 Gracz"),
+        "veteran":  r.get("🏆 Weteran")      or discord.utils.get(guild.roles, name="🏆 Weteran"),
+        "linked":   r.get("🔗 Połączony")    or discord.utils.get(guild.roles, name="🔗 Połączony"),
     }
 
     # 2. Lock @everyone
@@ -582,7 +599,8 @@ async def build_server(guild: discord.Guild) -> list[str]:
         embed_links=True, attach_files=True, add_reactions=True,
         use_application_commands=True,
     )
-    for key in ("verified",):
+    # Nadaj podstawowe uprawnienia wszystkim rangom progresji
+    for key in ("verified", "gracz", "veteran"):
         role = roles.get(key)
         if role:
             try:

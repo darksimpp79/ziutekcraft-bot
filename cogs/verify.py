@@ -39,14 +39,17 @@ class VerifyView(discord.ui.View):
         guild  = interaction.guild
         member = interaction.user
 
-        verified_role = discord.utils.get(guild.roles, name="🎯 Gracz")
+        # Daj rolę 👋 Nowy — progresja sama awansuje do 🎯 Gracz po 7 dniach
+        verified_role = discord.utils.get(guild.roles, name="👋 Nowy")
         if not verified_role:
             await interaction.response.send_message(
-                "❌ Rola `🎯 Gracz` nie istnieje — napisz do admina.", ephemeral=True
+                "❌ Rola `👋 Nowy` nie istnieje — napisz do admina.", ephemeral=True
             )
             return
 
-        if verified_role in member.roles:
+        # Sprawdź czy już ma jakąkolwiek rolę progresji (= jest zweryfikowany)
+        from cogs.progression import ALL_TIER_NAMES
+        if any(r.name in ALL_TIER_NAMES for r in member.roles):
             await interaction.response.send_message(
                 "ℹ️ Masz już dostęp — ciesz się serwerem! ⚔", ephemeral=True
             )
@@ -56,7 +59,7 @@ class VerifyView(discord.ui.View):
             await member.add_roles(verified_role, reason="Zaakceptował regulamin")
         except discord.Forbidden:
             await interaction.response.send_message(
-                "❌ Bot nie może nadać roli. Upewnij się, że rola bota jest wyżej niż `🎯 Gracz`.",
+                "❌ Bot nie może nadać roli. Upewnij się, że rola bota jest wyżej niż `👋 Nowy`.",
                 ephemeral=True,
             )
             return
