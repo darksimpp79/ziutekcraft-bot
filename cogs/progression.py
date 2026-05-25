@@ -114,6 +114,101 @@ class ProgressionCog(commands.Cog):
         # Joined_at może być None przez ułamek sekundy — jest 0 dni, dostanie Nowy
         await sync_member(member)
 
+    # ── /staz — gracz sprawdza swój czas na serwerze ─────────────────────────
+
+    @app_commands.command(
+        name="staz",
+        description="Sprawdź ile czasu spędziłeś na serwerze i do kiedy awansujesz",
+    )
+    @app_commands.guilds(discord.Object(id=GUILD_ID))
+    @app_commands.describe(uzytkownik="Opcjonalnie — sprawdź innego gracza")
+    async def staz(
+        self,
+        interaction: discord.Interaction,
+        uzytkownik: discord.Member | None = None,
+    ):
+        target = uzytkownik or interaction.user
+        if not isinstance(target, discord.Member):
+            await interaction.response.send_message("❌ Nie znaleziono gracza.", ephemeral=True)
+            return
+        if not target.joined_at:
+            await interaction.response.send_message("❌ Brak daty dołączenia.", ephemeral=True)
+            return
+
+        now      = discord.utils.utcnow()
+        delta    = now - target.joined_at
+        total_h  = int(delta.total_seconds() // 3600)
+        days     = delta.days
+        hours    = int((delta.total_seconds() % 86400) // 3600)
+        minutes  = int((delta.total_seconds() % 3600) // 60)
+
+        # Aktualna ranga
+        current_tier = _target_tier(days)
+        tier_roles = [r.name for r in target.roles if r.name in ALL_TIER_NAMES]
+        current_display = tier_roles[0] if tier_roles else current_tier
+
+        # Następna ranga i ile brakuje
+        next_info = ""
+        for threshold, name in TIME_TIERS:
+            if threshold > days:
+                days_left = threshold - days
+                next_info = f"Do **{name}** brakuje **{days_left}d** ({threshold - days} dni)"
+                break
+
+        # Pasek postępu do następnej rangi
+        progress_bar = ""
+        for i, (threshold, name) in enumerate(reversed(TIME_TIERS)):
+            if days >= threshold:
+                tiers_rev = list(reversed(TIME_TIERS))
+                idx = tiers_rev.index((threshold, name))
+                if idx + 1 < len(tiers_rev):
+                    next_thresh = tiers_rev[idx + 1][0]
+                    filled = min(10, int((days - threshold) / (next_thresh - threshold) * 10))
+                    bar    = "█" * filled + "░" * (10 - filled)
+                    pct    = min(100, int((days - threshold) / (next_thresh - threshold) * 100))
+                    progress_bar = f"`{bar}` {pct}%"
+                else:
+                    progress_bar = "`██████████` MAX 🏆"
+                break
+
+        color_map = {
+            "👋 Nowy":    0x555555,
+            "🎯 Gracz":   0x808080,
+            "🏆 Weteran": 0x95A5A6,
+        }
+        embed = discord.Embed(
+            title=f"⏱ Staż na serwerze — {target.display_name}",
+            color=color_map.get(current_tier, 0x5865F2),
+        )
+        embed.set_thumbnail(url=target.display_avatar.url)
+
+        embed.add_field(
+            name="📅 Na serwerze od",
+            value=f"<t:{int(target.joined_at.timestamp())}:D>\n"
+                  f"*(<t:{int(target.joined_at.timestamp())}:R>)*",
+            inline=True,
+        )
+        embed.add_field(
+            name="⏳ Łączny czas",
+            value=f"**{days}** dni **{hours}**h **{minutes}**m\n"
+                  f"(*{total_h:,} godzin łącznie*)",
+            inline=True,
+        )
+        embed.add_field(
+            name="🏅 Aktualna ranga",
+            value=current_display,
+            inline=True,
+        )
+        if next_info:
+            embed.add_field(name="⬆️ Następny awans", value=next_info, inline=False)
+            if progress_bar:
+                embed.add_field(name="Postęp", value=progress_bar, inline=False)
+        else:
+            embed.add_field(name="⬆️ Następny awans", value="Osiągnąłeś najwyższą rangę! 🏆", inline=False)
+
+        embed.set_footer(text="Rangi: 👋 Nowy (0-6d) → 🎯 Gracz (7-89d) → 🏆 Weteran (90+d)")
+        await interaction.response.send_message(embed=embed)
+
     # ── /progression-sync — ręczna sync dla admina ───────────────────────────
 
     @app_commands.command(
