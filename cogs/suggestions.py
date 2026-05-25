@@ -83,8 +83,8 @@ class SuggestionStatusView(discord.ui.View):
         color: int,
     ):
         # Tylko staff może zmieniać status
-        mod_role   = discord.utils.get(interaction.guild.roles, name="🛡️ Mod")
-        admin_role = discord.utils.get(interaction.guild.roles, name="👑 Admin")
+        mod_role   = discord.utils.get(interaction.guild.roles, name="🔰 Moderator")
+        admin_role = discord.utils.get(interaction.guild.roles, name="👑 Head Admin")
         staff_roles = {r for r in [mod_role, admin_role] if r}
         if not staff_roles.intersection(set(interaction.user.roles)):
             await interaction.response.send_message(

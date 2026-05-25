@@ -39,10 +39,10 @@ class VerifyView(discord.ui.View):
         guild  = interaction.guild
         member = interaction.user
 
-        verified_role = discord.utils.get(guild.roles, name="✔ Zweryfikowany")
+        verified_role = discord.utils.get(guild.roles, name="⚔️ Gracz")
         if not verified_role:
             await interaction.response.send_message(
-                "❌ Rola `✔ Zweryfikowany` nie istnieje — napisz do admina.", ephemeral=True
+                "❌ Rola `⚔️ Gracz` nie istnieje — napisz do admina.", ephemeral=True
             )
             return
 
@@ -56,7 +56,7 @@ class VerifyView(discord.ui.View):
             await member.add_roles(verified_role, reason="Zaakceptował regulamin")
         except discord.Forbidden:
             await interaction.response.send_message(
-                "❌ Bot nie może nadać roli. Upewnij się, że rola bota jest wyżej niż `✔ Zweryfikowany`.",
+                "❌ Bot nie może nadać roli. Upewnij się, że rola bota jest wyżej niż `⚔️ Gracz`.",
                 ephemeral=True,
             )
             return
