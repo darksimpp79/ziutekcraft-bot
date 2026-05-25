@@ -14,63 +14,64 @@ EXTRA_MODES_FILE = "data/game_modes_extra.json"
 
 ROLES = [
     # ── ZARZĄD ────────────────────────────────────────────────────────────────
-    {"name": "━━━━━━━ 👑 ZARZĄD 👑 ━━━━━━━",       "color": 0x000000, "hoist": False},
+    {"name": "👑━━━━━━━━ ZARZĄD ━━━━━━━━👑",        "color": 0x000000, "hoist": False},
     {"name": "👑 Właściciel",                        "color": 0xE74C3C, "hoist": True},
-    {"name": "💎 Współwłaściciel",                   "color": 0xFF6B35, "hoist": True},
-    {"name": "📋 Menedżer Projektu",                 "color": 0xE67E22, "hoist": False},
-    {"name": "🌐 Community Manager",                 "color": 0xF39C12, "hoist": False},
+    {"name": "🛡️ Współwłaściciel",                   "color": 0xFF6B35, "hoist": True},
+    {"name": "⚙️ Menedżer Projektu",                 "color": 0xE67E22, "hoist": False},
+    {"name": "📢 Community Manager",                 "color": 0xF39C12, "hoist": False},
     # ── TECHNIKA ──────────────────────────────────────────────────────────────
-    {"name": "━━━━━━━ ⚙️ TECHNIKA ⚙️ ━━━━━━━",     "color": 0x000000, "hoist": False},
-    {"name": "🔩 Główny Technik",                    "color": 0x2980B9, "hoist": True},
-    {"name": "🖥️ Technik Serwera",                   "color": 0x3498DB, "hoist": False},
-    {"name": "⚙️ Developer Modów",                   "color": 0x5DADE2, "hoist": False},
-    {"name": "🔧 Developer Pluginów",                "color": 0x7FB3D3, "hoist": False},
-    {"name": "🖧 Administrator VPS",                 "color": 0x1ABC9C, "hoist": False},
+    {"name": "💻━━━━━━━━ TECHNIKA ━━━━━━━━💻",       "color": 0x000000, "hoist": False},
+    {"name": "💻 Główny Technik",                    "color": 0x2980B9, "hoist": True},
+    {"name": "🔧 Technik Serwera",                   "color": 0x3498DB, "hoist": False},
+    {"name": "⚡ Developer Modów",                   "color": 0x5DADE2, "hoist": False},
+    {"name": "🧩 Developer Pluginów",                "color": 0x7FB3D3, "hoist": False},
+    {"name": "🌐 Administrator VPS",                 "color": 0x1ABC9C, "hoist": False},
     # ── TWORZENIE ─────────────────────────────────────────────────────────────
-    {"name": "━━━━━━ 🏗️ TWORZENIE 🏗️ ━━━━━━",      "color": 0x000000, "hoist": False},
+    {"name": "🏗️━━━━━━━━ TWORZENIE ━━━━━━━━🏗️",     "color": 0x000000, "hoist": False},
     {"name": "🏗️ Head Builder",                      "color": 0x27AE60, "hoist": True},
     {"name": "🧱 Builder",                            "color": 0x2ECC71, "hoist": False},
-    {"name": "📜 Quest Creator",                      "color": 0x82E0AA, "hoist": False},
+    {"name": "📚 Quest Creator",                      "color": 0x82E0AA, "hoist": False},
     {"name": "🎨 Grafik",                             "color": 0xA9DFBF, "hoist": False},
-    {"name": "🖌️ Projektant UI/FancyMenu",           "color": 0xD5F5E3, "hoist": False},
+    {"name": "✨ Projektant UI/FancyMenu",            "color": 0xD5F5E3, "hoist": False},
     # ── ADMINISTRACJA ─────────────────────────────────────────────────────────
-    {"name": "━━━━━ 🛡️ ADMINISTRACJA 🛡️ ━━━━━",    "color": 0x000000, "hoist": False},
-    {"name": "👑 Head Admin",                         "color": 0x8E44AD, "hoist": True},
-    {"name": "🛡️ Administrator",                      "color": 0x9B59B6, "hoist": True},
-    {"name": "🔰 Moderator",                          "color": 0xBB8FCE, "hoist": True},
-    {"name": "🎧 Support",                            "color": 0xD2B4DE, "hoist": False},
+    {"name": "🛡️━━━━━━━━ ADMINISTRACJA ━━━━━━━━🛡️", "color": 0x000000, "hoist": False},
+    {"name": "⚔️ Head Admin",                         "color": 0x8E44AD, "hoist": True},
+    {"name": "🔨 Administrator",                      "color": 0x9B59B6, "hoist": True},
+    {"name": "🛠️ Moderator",                          "color": 0xBB8FCE, "hoist": True},
+    {"name": "🚔 Support",                            "color": 0xD2B4DE, "hoist": False},
     # ── TESTY ─────────────────────────────────────────────────────────────────
-    {"name": "━━━━━━━━ 🧪 TESTY 🧪 ━━━━━━━━",       "color": 0x000000, "hoist": False},
+    {"name": "🧪━━━━━━━━ TESTY ━━━━━━━━🧪",          "color": 0x000000, "hoist": False},
     {"name": "🧪 Head Tester",                        "color": 0x1ABC9C, "hoist": True},
-    {"name": "⚔ Beta Tester",                        "color": 0xAA2200, "hoist": False},
+    {"name": "🔍 Tester",                             "color": 0x76D7C4, "hoist": False},
+    {"name": "⚔ Beta Tester",                        "color": 0xAA2200, "hoist": False},  # Assassin Arena
     # ── MEDIA ─────────────────────────────────────────────────────────────────
-    {"name": "━━━━━━━━ 📸 MEDIA 📸 ━━━━━━━━",        "color": 0x000000, "hoist": False},
-    {"name": "▶️ YouTube Team",                       "color": 0xFF0000, "hoist": True},
+    {"name": "📺━━━━━━━━ MEDIA ━━━━━━━━📺",           "color": 0x000000, "hoist": False},
+    {"name": "🎬 YouTube Team",                       "color": 0xFF0000, "hoist": True},
     {"name": "🎵 TikTok Team",                        "color": 0xFF2D55, "hoist": False},
     {"name": "📸 Media Team",                         "color": 0xE91E63, "hoist": False},
-    {"name": "🎙️ Partner/Streamer",                   "color": 0xE040FB, "hoist": False},
+    {"name": "🎥 Partner / Streamer",                 "color": 0xE040FB, "hoist": False},
     # ── RANGI PREMIUM ─────────────────────────────────────────────────────────
-    {"name": "━━━━━ 💰 RANGI PREMIUM 💰 ━━━━━",      "color": 0x000000, "hoist": False},
-    {"name": "💠 Sponsor",                            "color": 0x00BCD4, "hoist": True},
-    {"name": "💜 MVIP",                               "color": 0xFF8C00, "hoist": False},
-    {"name": "💛 SVIP",                               "color": 0xFF6347, "hoist": False},
-    {"name": "💚 VIP",                                "color": 0xFFA500, "hoist": False},
+    {"name": "💎━━━━━━━━ RANGI PREMIUM ━━━━━━━━💎",  "color": 0x000000, "hoist": False},
+    {"name": "💎 Sponsor",                            "color": 0x00BCD4, "hoist": True},
+    {"name": "👑 MVIP",                               "color": 0xFF8C00, "hoist": False},
+    {"name": "🔷 SVIP",                               "color": 0xFF6347, "hoist": False},
+    {"name": "⭐ VIP",                                "color": 0xFFA500, "hoist": False},
     # ── SPOŁECZNOŚĆ ───────────────────────────────────────────────────────────
-    {"name": "━━━━━ 👥 SPOŁECZNOŚĆ 👥 ━━━━━",        "color": 0x000000, "hoist": False},
-    {"name": "🎬 Twórca",                             "color": 0x5865F2, "hoist": False},
-    {"name": "💜 Booster Discord",                    "color": 0xFF73FA, "hoist": False},
-    {"name": "🏅 Weteran",                            "color": 0x95A5A6, "hoist": False},
-    {"name": "⚔️ Gracz",                              "color": 0x808080, "hoist": False},
-    {"name": "🆕 Nowy",                               "color": 0x555555, "hoist": False},
+    {"name": "🎮━━━━━━━━ SPOŁECZNOŚĆ ━━━━━━━━🎮",    "color": 0x000000, "hoist": False},
+    {"name": "👑 Twórca",                             "color": 0x5865F2, "hoist": False},
+    {"name": "🔥 Booster Discord",                    "color": 0xFF73FA, "hoist": False},
+    {"name": "🏆 Weteran",                            "color": 0x95A5A6, "hoist": False},
+    {"name": "🎯 Gracz",                              "color": 0x808080, "hoist": False},
+    {"name": "👋 Nowy",                               "color": 0x555555, "hoist": False},
     # ── SYSTEM ────────────────────────────────────────────────────────────────
-    {"name": "━━━━━━━━ ⚙️ SYSTEM ⚙️ ━━━━━━━━",       "color": 0x000000, "hoist": False},
+    {"name": "⚙️━━━━━━━━ SYSTEM ━━━━━━━━⚙️",          "color": 0x000000, "hoist": False},
     {"name": "🎉 Event Team",                         "color": 0x00BCD4, "hoist": False},
     {"name": "🤖 Bot",                                "color": 0x00FF7F, "hoist": False},
     {"name": "🔗 Połączony",                          "color": 0x00AA88, "hoist": False},  # MC-DC konto
     {"name": "🔇 Wyciszony",                          "color": 0x607D8B, "hoist": False},
-    {"name": "⛔ Ukarany",                            "color": 0x263238, "hoist": False},
+    {"name": "🚫 Ukarany",                            "color": 0x263238, "hoist": False},
     # ── RANGI KILLÓW ──────────────────────────────────────────────────────────
-    {"name": "━━━━━━ ⚔ RANGI KILLÓW ⚔ ━━━━━━",     "color": 0x000000, "hoist": False},
+    {"name": "⚔━━━━━━━━ RANGI KILLÓW ━━━━━━━━⚔",    "color": 0x000000, "hoist": False},
     {"name": "⚜ Generał",   "color": 0xFF2222, "hoist": True},
     {"name": "🦅 Pułkownik", "color": 0xFF6600, "hoist": False},
     {"name": "🎖 Major",     "color": 0xFFAA00, "hoist": False},
@@ -323,9 +324,9 @@ def _build_overwrites(
 def _resolve_roles(guild: discord.Guild) -> dict:
     return {
         "everyone": guild.default_role,
-        "admin":    discord.utils.get(guild.roles, name="👑 Head Admin"),
-        "mod":      discord.utils.get(guild.roles, name="🔰 Moderator"),
-        "verified": discord.utils.get(guild.roles, name="⚔️ Gracz"),
+        "admin":    discord.utils.get(guild.roles, name="⚔️ Head Admin"),
+        "mod":      discord.utils.get(guild.roles, name="🛠️ Moderator"),
+        "verified": discord.utils.get(guild.roles, name="🎯 Gracz"),
         "linked":   discord.utils.get(guild.roles, name="🔗 Połączony"),
     }
 
@@ -561,9 +562,9 @@ async def build_server(guild: discord.Guild) -> list[str]:
 
     roles = {
         "everyone": guild.default_role,
-        "admin":    r.get("👑 Head Admin")  or discord.utils.get(guild.roles, name="👑 Head Admin"),
-        "mod":      r.get("🔰 Moderator")   or discord.utils.get(guild.roles, name="🔰 Moderator"),
-        "verified": r.get("⚔️ Gracz")       or discord.utils.get(guild.roles, name="⚔️ Gracz"),
+        "admin":    r.get("⚔️ Head Admin")  or discord.utils.get(guild.roles, name="⚔️ Head Admin"),
+        "mod":      r.get("🛠️ Moderator")   or discord.utils.get(guild.roles, name="🛠️ Moderator"),
+        "verified": r.get("🎯 Gracz")        or discord.utils.get(guild.roles, name="🎯 Gracz"),
         "linked":   r.get("🔗 Połączony")   or discord.utils.get(guild.roles, name="🔗 Połączony"),
     }
 

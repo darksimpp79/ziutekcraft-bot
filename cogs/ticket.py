@@ -82,8 +82,8 @@ class TicketView(discord.ui.View):
 
         await thread.add_user(user)
 
-        mod_role   = discord.utils.get(guild.roles, name="🔰 Moderator")
-        admin_role = discord.utils.get(guild.roles, name="👑 Head Admin")
+        mod_role   = discord.utils.get(guild.roles, name="🛠️ Moderator")
+        admin_role = discord.utils.get(guild.roles, name="⚔️ Head Admin")
         staff_ping = " ".join(r.mention for r in [mod_role, admin_role] if r)
 
         embed = discord.Embed(

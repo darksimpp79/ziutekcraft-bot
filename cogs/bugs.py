@@ -74,8 +74,8 @@ class BugModal(discord.ui.Modal, title="🐛 Zgłoszenie Buga"):
                         inline=False)
         embed.set_footer(text=footer(f"Bug #{bug_id:03d}"))
 
-        mod_role   = discord.utils.get(interaction.guild.roles, name="🔰 Moderator")
-        admin_role = discord.utils.get(interaction.guild.roles, name="👑 Head Admin")
+        mod_role   = discord.utils.get(interaction.guild.roles, name="🛠️ Moderator")
+        admin_role = discord.utils.get(interaction.guild.roles, name="⚔️ Head Admin")
         staff_ping = " ".join(r.mention for r in [mod_role, admin_role] if r)
 
         await thread.send(

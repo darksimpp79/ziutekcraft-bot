@@ -31,18 +31,18 @@ ALL_KILL_RANK_NAMES = {name for _, name in KILL_RANKS}
 # Wartość = nazwa roli na Discordzie (musi się zgadzać z ROLES w setup.py)
 LP_ROLE_MAP = {
     # Staff
-    "admin":        "👑 Head Admin",
-    "mod":          "🔰 Moderator",
-    "moderator":    "🔰 Moderator",
-    "helper":       "🎧 Support",
+    "admin":        "⚔️ Head Admin",
+    "mod":          "🛠️ Moderator",
+    "moderator":    "🛠️ Moderator",
+    "helper":       "🚔 Support",
     # Donation
-    "premium-plus": "💜 MVIP",
-    "premiumplus":  "💜 MVIP",
-    "premium":      "💚 VIP",
+    "premium-plus": "👑 MVIP",
+    "premiumplus":  "👑 MVIP",
+    "premium":      "⭐ VIP",
     # Zwykły gracz — dopasuj do nazwy grupy default w twoim LP
-    "gracz":        "⚔️ Gracz",
-    "default":      "⚔️ Gracz",
-    "player":       "⚔️ Gracz",
+    "gracz":        "🎯 Gracz",
+    "default":      "🎯 Gracz",
+    "player":       "🎯 Gracz",
 }
 ALL_LP_ROLE_NAMES = set(LP_ROLE_MAP.values())
 
@@ -94,7 +94,7 @@ async def assign_kill_rank(member: discord.Member, kills: int) -> bool:
 
 # Role staffu — nigdy nie zdejmujemy jeśli LP nie zwróciło poprawnej grupy
 # (zabezpieczenie: błąd RCON nie odbiera adminowi jego roli)
-STAFF_ROLE_NAMES = {"👑 Head Admin", "🔰 Moderator"}
+STAFF_ROLE_NAMES = {"⚔️ Head Admin", "🛠️ Moderator"}
 
 
 async def assign_lp_rank(member: discord.Member, lp_group: str | None):
